@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="EPAM_Task_0.MediaFiles.Audio" Collapsed="true">
+    <Position X="3.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAACAAAAAAIAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>MediaFiles\Audio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EPAM_Task_0.MediaFiles.Image" Collapsed="true">
+    <Position X="8.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>MediaFiles\Image.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EPAM_Task_0.MediaFiles.MediaFile" Collapsed="true">
+    <Position X="6" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAgAgAAAAAAAQAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>MediaFiles\MediaFile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EPAM_Task_0.MediaFiles.Video" Collapsed="true">
+    <Position X="6.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAABAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>MediaFiles\Video.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EPAM_Task_0.MediaLibrary" Collapsed="true">
+    <Position X="10.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAQAAAIAAAAAAAAAAAAAEGA=</HashCode>
+      <FileName>MediaLibrary.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EPAM_Task_0.MediaPlayer" Collapsed="true">
+    <Position X="12.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>MediaPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EPAM_Task_0.Playlist" Collapsed="true">
+    <Position X="10.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAIAAAAAAAABAAAAAAAAAAQAAAAAAAAAAAAAAAAEAAI=</HashCode>
+      <FileName>Playlist.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EPAM_Task_0.Program" Collapsed="true">
+    <Position X="12.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="EPAM_Task_0.MediaFiles.Enums.MediaType" Collapsed="true">
+    <Position X="12.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAAAAAAAAAABAAAAAAAAAAAAg=</HashCode>
+      <FileName>MediaFiles\Enums\MediaType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
