@@ -6,6 +6,7 @@ namespace EPAM_Task_0
 {
     public class Playlist
     {
+        
         public string Name { get; private set; }
 
         public List<MediaFile> MediaFiles { get; private set; }

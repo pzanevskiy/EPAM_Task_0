@@ -17,6 +17,8 @@ namespace EPAM_Task_0
                 new Video(),
                 new Image()
             };
+            Video video = new Video();
+            video.
             m.AddPlaylist("new 1", list);
 
             m.PlayPlaylist(m.playlists[1]);
