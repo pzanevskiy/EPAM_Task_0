@@ -22,12 +22,13 @@ namespace EPAM_Task_0.MediaFiles
             this.Width = wight;
         }
 
-        public override void Info()
+        protected override void Info()
         {
             Console.WriteLine("This is image");
         }
         public override void Action()
         {
+            Info();
             Console.WriteLine($"{Name} properties: height - {Height}, width - {Width}");
         }
     }

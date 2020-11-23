@@ -24,14 +24,16 @@ namespace EPAM_Task_0.MediaFiles
             this.Duration = duration;
         }
 
-        public override void Info()
+        protected override void Info()
         {
             Console.WriteLine("This is audio");
         }
 
         public override void Action()
         {
+            Info();
             Console.WriteLine($"{Name}, singer - {Singer}, genre - {Genre}");
+
         }
     }
 }

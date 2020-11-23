@@ -21,13 +21,14 @@ namespace EPAM_Task_0.MediaFiles
             this.Quality = quality;
         }
 
-        public override void Info()
+        protected override void Info()
         {
             Console.WriteLine("This is video");
         }
 
         public override void Action()
         {
+            Info();
             Console.WriteLine($"{Name} play with quality - {Quality}, duration - {Duration}");
         }
     }

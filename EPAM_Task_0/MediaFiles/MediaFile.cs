@@ -74,7 +74,7 @@ namespace EPAM_Task_0.MediaFiles
             this.Size = size;
         }
 
-        public abstract void Info();
+        protected abstract void Info();
         public abstract void Action();
     }
 }
