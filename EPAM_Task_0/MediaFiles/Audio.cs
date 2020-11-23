@@ -28,5 +28,10 @@ namespace EPAM_Task_0.MediaFiles
         {
             Console.WriteLine("This is audio");
         }
+
+        public override void Action()
+        {
+            Console.WriteLine($"{Name}, singer - {Singer}, genre - {Genre}");
+        }
     }
 }

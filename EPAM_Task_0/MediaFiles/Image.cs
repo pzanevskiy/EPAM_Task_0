@@ -26,5 +26,9 @@ namespace EPAM_Task_0.MediaFiles
         {
             Console.WriteLine("This is image");
         }
+        public override void Action()
+        {
+            Console.WriteLine($"{Name} properties: height - {Height}, width - {Width}");
+        }
     }
 }

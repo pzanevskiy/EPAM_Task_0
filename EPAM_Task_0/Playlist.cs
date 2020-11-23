@@ -6,8 +6,22 @@ namespace EPAM_Task_0
 {
     public class Playlist
     {
-        
-        public string Name { get; private set; }
+        private string _name;
+        public string Name 
+        {
+            get { return _name; }
+            private set
+            {
+                if (value == "")
+                {
+                    _name = "unknown";
+                }
+                else
+                {
+                    _name = value;
+                }
+            }
+        }
 
         public List<MediaFile> MediaFiles { get; private set; }
 

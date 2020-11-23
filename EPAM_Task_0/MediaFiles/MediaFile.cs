@@ -49,6 +49,7 @@ namespace EPAM_Task_0.MediaFiles
                 if (value <= 0)
                 {
                     System.Console.WriteLine("Размер должен быть больше 0");
+                    _size = 1;
                 }
                 else
                 {
@@ -74,5 +75,6 @@ namespace EPAM_Task_0.MediaFiles
         }
 
         public abstract void Info();
+        public abstract void Action();
     }
 }

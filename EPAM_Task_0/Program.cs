@@ -17,12 +17,8 @@ namespace EPAM_Task_0
                 new Video(),
                 new Image()
             };
-            Video video = new Video();
-            video.
-            m.AddPlaylist("new 1", list);
-
-            m.PlayPlaylist(m.playlists[1]);
-            m.AddMediaToPlaylist(m.playlists[0], new Image());
+            MediaFile media = new Image(-1, "", -1, 1,5);
+            media.Action();
             Console.WriteLine();
             Console.WriteLine("Hello World!");
         }

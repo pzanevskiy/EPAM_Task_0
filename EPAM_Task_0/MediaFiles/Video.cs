@@ -25,5 +25,10 @@ namespace EPAM_Task_0.MediaFiles
         {
             Console.WriteLine("This is video");
         }
+
+        public override void Action()
+        {
+            Console.WriteLine($"{Name} play with quality - {Quality}, duration - {Duration}");
+        }
     }
 }
