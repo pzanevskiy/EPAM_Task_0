@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace EPAM_Task_0
 {
-    public class Playlist
+    public class Playlist : IPlayable
     {
         private string _name;
         public string Name 
@@ -23,14 +23,38 @@ namespace EPAM_Task_0
             }
         }
 
-        public List<MediaFile> MediaFiles { get; private set; }
+        private List<MediaFile> _mediaFiles;
+        public List<MediaFile> MediaFiles 
+        {
+            get { return _mediaFiles; }
+            private set
+            {
+                if (value.Count == 0)
+                {
+                    _mediaFiles = new List<MediaFile>
+                    {
+                        new Video()
+                    };
+                }
+                else
+                {
+                    _mediaFiles = value;
+                }
+            }
+        }
 
         public Playlist()
         {
             this.Name = "untitled";
             this.MediaFiles = new List<MediaFile>();
         }
-
+        public void Play()
+        {
+            foreach(var items in _mediaFiles)
+            {
+                items.Play();
+            }
+        }
         public void RenamePlaylist(string newName)
         {
             this.Name = newName;

@@ -9,16 +9,19 @@ namespace EPAM_Task_0
     {
         static void Main(string[] args)
         {
-            MediaLibrary m = new MediaLibrary();
-            List<MediaFile> list = new List<MediaFile>
-            {
-                new Audio(),
-                new Video(),
-                new Video(),
-                new Image()
-            };
-            MediaFile media = new Image(-1, "", -1, 1,5);
-            media.Action();
+            //MediaLibrary m = new MediaLibrary();
+            //List<MediaFile> list = new List<MediaFile>
+            //{
+            //    new Audio(),
+            //    new Video(),
+            //    new Video(),
+            //    new Image()
+            //};
+            Playlist playlist = new Playlist();
+            MediaPlayer player = new MediaPlayer();
+            player.Play(playlist);
+           // MediaFile media = new Image(-1, "", -1, 1,5);
+            //media.Action();
             Console.WriteLine();
             Console.WriteLine("Hello World!");
         }

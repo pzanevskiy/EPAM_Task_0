@@ -2,7 +2,7 @@
 
 namespace EPAM_Task_0.MediaFiles
 {
-    public abstract class MediaFile
+    public abstract class MediaFile : IPlayable
     {
       
         private int _id;
@@ -76,5 +76,10 @@ namespace EPAM_Task_0.MediaFiles
 
         protected abstract void Info();
         public abstract void Action();
+
+        public void Play()
+        {
+            Info();
+        }
     }
 }

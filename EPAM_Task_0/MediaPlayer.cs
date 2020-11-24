@@ -5,18 +5,12 @@ namespace EPAM_Task_0
 {
     public class MediaPlayer
     {
-        public void Play(MediaFile mediaFile)
+        public void Play(IPlayable playable)
         {
-            Console.WriteLine("plays");
+            playable.Play();
         }
 
-        public void Play(Playlist playlist)
-        {
-            foreach (var item in playlist.MediaFiles)
-            {
-                Play(item);
-            }
-        }
+       
         public void Pause(MediaFile mediaFile)
         {
 
