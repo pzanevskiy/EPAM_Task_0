@@ -3,13 +3,19 @@ using System;
 
 namespace EPAM_Task_0
 {
-    public class MediaPlayer
+    public class MediaPlayer 
     {
         public void Play(IPlayable playable)
         {
-            playable.Play();
+            
+            if(playable is Playlist)
+            {
+                (playable as Playlist).AllAboutMedia();
+            }           
+            playable.Play();       
         }
 
+       
        
         public void Pause(MediaFile mediaFile)
         {

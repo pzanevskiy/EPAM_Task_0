@@ -31,5 +31,9 @@ namespace EPAM_Task_0.MediaFiles
             Info();
             Console.WriteLine($"{Name} properties: height - {Height}, width - {Width}");
         }
+        public void Function()
+        {
+            Console.WriteLine("Image funct");
+        }
     }
 }

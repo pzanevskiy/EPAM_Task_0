@@ -28,7 +28,7 @@ namespace EPAM_Task_0.MediaFiles
         public string Name
         {
             get { return _name; } 
-            private set 
+            protected set 
             {
                 if (value == "")
                 {

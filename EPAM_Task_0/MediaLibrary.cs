@@ -33,15 +33,7 @@ namespace EPAM_Task_0
             playlists.Remove(playlist);
         }
 
-        public void PlayMedia(MediaFile media)
-        {
-            mediaPlayer.Play(media);
-        }
-
-        public void PlayPlaylist(Playlist playlist)
-        {
-            mediaPlayer.Play(playlist);
-        }
+        
 
         public void AddMediaToPlaylist(Playlist playlist, MediaFile mediaFile)
         {

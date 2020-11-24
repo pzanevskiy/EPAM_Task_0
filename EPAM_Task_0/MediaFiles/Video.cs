@@ -13,7 +13,10 @@ namespace EPAM_Task_0.MediaFiles
         {
             this.MediaType = MediaType.Video;
         }
-
+        public Video(string name) : base()
+        {
+            this.Name = name;
+        }
         public Video(int id, string name, double size, double duration, string quality) : base(id, name, size)
         {
             this.MediaType = MediaType.Audio;

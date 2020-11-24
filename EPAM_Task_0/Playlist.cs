@@ -33,7 +33,8 @@ namespace EPAM_Task_0
                 {
                     _mediaFiles = new List<MediaFile>
                     {
-                        new Video()
+                        new Video("video 1"),
+                        new Video("audio 1")
                     };
                 }
                 else
@@ -50,10 +51,7 @@ namespace EPAM_Task_0
         }
         public void Play()
         {
-            foreach(var items in _mediaFiles)
-            {
-                items.Play();
-            }
+            
         }
         public void RenamePlaylist(string newName)
         {
@@ -84,6 +82,14 @@ namespace EPAM_Task_0
                 }
             }
             return null;
+        }
+        public void AllAboutMedia()
+        {
+            int i = 1;
+            foreach(var item in _mediaFiles)
+            {
+                System.Console.WriteLine(i+". "+item.Name);
+            }
         }
     }
 }
