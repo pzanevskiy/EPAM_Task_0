@@ -1,26 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Task1.Models.Enums;
 
 namespace Task1.Models
 {
-    public class Cookie : Sweet
+    public abstract class Cookie : Sweet
     {
-        private CookieType _cookieType;
+        private string _cookieType;
 
-        public CookieType CookieType { get => _cookieType; set => _cookieType = value; }
+        public string CookieType { get => _cookieType; set => _cookieType = value.Equals("") ? "butter" : value; }
 
         public Cookie() { }
-        public Cookie(string name, double weight, double sugar, CookieType cookieType) : base(name, weight, sugar)
+        public Cookie(string name, double weight, string cookieType) : base(name, weight)
         {
             CookieType = cookieType;
         }
 
-        public override void Print()
-        {
-            Console.WriteLine($"Name: {Name}, Weight: {Weight}g, Sugar: {Sugar}g, Type: {CookieType}");
-
-        }
+        public abstract override void Print();
     }
 }

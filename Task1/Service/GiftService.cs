@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Task1.Models;
+using Task1.Models.Interfaces;
 
 namespace Task1.Service
 {
@@ -23,7 +24,7 @@ namespace Task1.Service
 
         public ICollection<Sweet> SearchSugar(ICollection<Sweet> sweets, double min, double max)
         {
-            return sweets.Where(x => x.Sugar >= min && x.Sugar <= max).ToList();
+            return sweets.Where(x => x is ISugarable sugarable && sugarable.Sugar >= min && sugarable.Sugar <= max).ToList();
         }
 
         public ICollection<Sweet> SortByWeight(ICollection<Sweet> sweets)

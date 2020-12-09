@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Task1.Models.Interfaces;
 
 namespace Task1.Models
 {
-    public class Candy : Sweet
+    public abstract class Candy : Sweet, ISugarable
     {
-        private double _calories;
-        public double Calories
+        private double _sugar;
+        public double Sugar
         {
-            get => _calories;
-            set => _calories = value < 0 ? 0 : value;
-            
-        }
+            get => _sugar;
+            set => _sugar = value < 0 ? 0 : value > 100 ? 100 : value;            
+        }       
+
         public Candy()
         {
 
         }
 
-        public Candy(string name, double weight, double sugar, double calories) : base(name, weight, sugar)
+        public Candy(string name, double weight, double sugar) : base(name, weight)
         {
-            Calories = calories;
+            Sugar = sugar;
         }
 
-        public override void Print()
-        {
-            Console.WriteLine($"Name: {Name}, Weight: {Weight}g, Sugar: {Sugar}g, Calories: {Calories}");
-        }
+        public abstract override void Print();
+        
     }
 }

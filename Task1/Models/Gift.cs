@@ -18,7 +18,7 @@ namespace Task1.Models
         public ICollection<Sweet> Sweets
         {
             get => _sweets;
-            set => _sweets = value.Count == 0 ? _sweets = new List<Sweet> { new Candy("",2,3,4) } : value;            
+            set => _sweets = value;           
         }
 
         public Gift()
