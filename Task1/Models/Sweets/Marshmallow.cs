@@ -25,9 +25,10 @@ namespace Task1.Models
         {
                 
         }
-        public Marshmallow(string name, double weight, string flavor) : base(name, weight)
+        public Marshmallow(string name, double weight, string flavor, double sugar) : base(name, weight)
         {
             Flavor = flavor;
+            Sugar = sugar;
         }
 
         public override void Print()
