@@ -18,12 +18,7 @@ namespace Task1.Models
         {
             get => _weight;
             set => _weight = value < 0 ? 0 : value;            
-        }
-        //public double Sugar
-        //{
-        //    get => _sugar;
-        //    set => _sugar = value < 0 ? 0 : value;
-        //}
+        }      
 
         public Sweet()
         {
