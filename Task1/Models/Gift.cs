@@ -23,10 +23,11 @@ namespace Task1.Models
 
         public Gift()
         {
-
+            Name = "";
+            Sweets = new List<Sweet>();
         }
 
-        public Gift(string name, List<Sweet> sweets)
+        public Gift(string name, ICollection<Sweet> sweets)
         {
             Name = name;
             Sweets = sweets;

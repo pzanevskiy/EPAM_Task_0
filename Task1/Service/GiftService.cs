@@ -31,5 +31,23 @@ namespace Task1.Service
         {
             return sweets.OrderBy(x => x.Weight).ToList();
         }
+
+        public ICollection<Sweet> SortOnlySugarable(ICollection<Sweet> sweets)
+        {
+            return sweets.Where(x => x is ISugarable).OrderBy(x => ((ISugarable)x).Sugar).ToList();
+        }
+
+        public ICollection<Sweet> SortOnlyChocolable(ICollection<Sweet> sweets)
+        {
+            return sweets.Where(x => x is IChocolable).OrderBy(x => ((IChocolable)x).PercentageOfChocolate).ToList();
+        }
+
+        public void AddSweetsToGift(Gift gift,ICollection<Sweet> sweets)
+        {
+            foreach(Sweet sweet in sweets)
+            {
+                gift.Sweets.Add(sweet);
+            }
+        }
     }
 }

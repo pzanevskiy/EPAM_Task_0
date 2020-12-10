@@ -13,27 +13,23 @@ namespace Task1
     {
         static void Main(string[] args)
         {
-            Sweet chocolateCandy=new ChocolateCandy("",23,45,55);
-            Sweet chocolateCandy1=new ChocolateCandy("",22,40,555);
-            Sweet brittleCandy = new BrittleСandy("", 10, 42, 11);
-            Sweet brittleCandy1 = new BrittleСandy("", 8, 80, 5);
-            Sweet liquorCandy = new LiquorCandy("", 7, 5, 555);
-            Sweet curdCookie = new CurdCookie("", 111, "", 2);
-            Sweet chocolateCookie = new ChocolateCookie("", 75, "", 10);
-            Sweet oatCoockie = new OatCookie("", 30, "");
-            Sweet chocolate = new Chocolate("",200,25,50);
-            Gift gift = new Gift("", new List<Sweet>());
-            gift.Sweets.Add(new Marshmallow("",1,"",10));
-            gift.Sweets.Add(chocolateCandy);
-            gift.Sweets.Add(chocolateCandy1);
-            gift.Sweets.Add(brittleCandy);
-            gift.Sweets.Add(brittleCandy1);
-            gift.Sweets.Add(liquorCandy);
-            gift.Sweets.Add(curdCookie);
-            gift.Sweets.Add(chocolateCookie);
-            gift.Sweets.Add(oatCoockie);
-            gift.Sweets.Add(chocolate);
+            ICollection<Sweet> sweets = new List<Sweet>
+            {
+                new ChocolateCandy("",23,45,55),
+                new ChocolateCandy("",22,40,555),
+                new BrittleСandy("", 10, 42, 11),
+                new BrittleСandy("", 8, 80, 5),
+                new LiquorCandy("", 7, 5, 555),
+                new CurdCookie("", 111, "", 2),
+                new ChocolateCookie("", 75, "", 10),
+                new OatCookie("", 30, ""),
+                new Chocolate("", 200, 25, 50),
+                new Marshmallow("",1,"",10)
+            };    
+            
+            Gift gift = new Gift();           
             IGiftService giftService = new GiftService();
+            giftService.AddSweetsToGift(gift, sweets);
             Console.WriteLine("All sweets");
             giftService.PrintAll(gift.Sweets);
             Console.WriteLine();
@@ -46,6 +42,11 @@ namespace Task1
             Console.WriteLine("Gift weight");
             Console.WriteLine($"{giftService.CalculateWeight(gift.Sweets)}g");
             Console.WriteLine();
+
+            giftService.PrintAll(giftService.SortOnlySugarable(gift.Sweets));
+            Console.WriteLine();
+            giftService.PrintAll(giftService.SortOnlyChocolable(gift.Sweets));
+
         }
     }
 }

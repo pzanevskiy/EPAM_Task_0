@@ -11,5 +11,8 @@ namespace Task1.Service
         public double CalculateWeight(ICollection<Sweet> sweets);
         public ICollection<Sweet> SearchSugar(ICollection<Sweet> sweets,double min,double max);
         public ICollection<Sweet> SortByWeight(ICollection<Sweet> sweets);
+        public ICollection<Sweet> SortOnlySugarable(ICollection<Sweet> sweets);
+        public ICollection<Sweet> SortOnlyChocolable(ICollection<Sweet> sweets);
+        public void AddSweetsToGift(Gift gift,ICollection<Sweet> sweets);
     }
 }
