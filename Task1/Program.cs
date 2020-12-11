@@ -91,7 +91,7 @@ namespace Task1
                             break;
                         }                    
                     case 0:
-                        {
+                        { 
                             flag = false;
                             break;
                         }
