@@ -30,22 +30,86 @@ namespace Task1
             Gift gift = new Gift();           
             IGiftService giftService = new GiftService();
             giftService.AddSweetsToGift(gift, sweets);
-            Console.WriteLine("All sweets");
-            giftService.PrintAll(gift.Sweets);
-            Console.WriteLine();
-            Console.WriteLine("All sweets min max sugar");
-            giftService.PrintAll(giftService.SearchSugar(gift.Sweets, 40, 50));
-            Console.WriteLine();
-            Console.WriteLine("All sweets sorted by weight");
-            giftService.PrintAll(giftService.SortByWeight(gift.Sweets));
-            Console.WriteLine();
-            Console.WriteLine("Gift weight");
-            Console.WriteLine($"{giftService.CalculateWeight(gift.Sweets)}g");
-            Console.WriteLine();
+            int choose;
+            bool flag = true;
+            while (flag)
+            {
+                
+                Console.WriteLine("1-print all sweets in gift\n" +
+                    "2-Search by sugar value\n" +
+                    "3-Sort by weight\n" +
+                    "4-Get total gift weight\n" +
+                    "5-Sort sweets which have sugar\n" +
+                    "6-Sort sweets which have chocolate\n");
 
-            giftService.PrintAll(giftService.SortOnlySugarable(gift.Sweets));
+                choose = Convert.ToInt32(Console.ReadLine());
+                Console.Clear();
+                switch (choose)
+                {                  
+                    case 1:
+                        {
+                            Console.WriteLine("All sweets");
+                            giftService.PrintAll(gift.Sweets);
+                            break;
+                        }
+                    case 2:
+                        {                            
+                            Console.Write("Min value");
+                            int min = int.Parse(Console.ReadLine());
+                            Console.Write("Max value"); 
+                            int max = int.Parse(Console.ReadLine());
+                            Console.WriteLine();
+                            giftService.PrintAll(giftService.SearchSugar(gift.Sweets, min, max));
+                            break;
+                        }
+                    case 3:
+                        {
+                            Console.WriteLine("All sweets sorted by weight");
+                            giftService.PrintAll(giftService.SortByWeight(gift.Sweets));
+                            Console.WriteLine();
+                            break;
+                        }
+                    case 4:
+                        {
+                            Console.WriteLine("Gift weight");
+                            Console.WriteLine($"{giftService.CalculateWeight(gift.Sweets)}g");
+                            Console.WriteLine();
+                            break;
+                        }
+                    case 5:
+                        {
+                            Console.WriteLine("Sort sweets which have sugar");
+                            giftService.PrintAll(giftService.SortOnlySugarable(gift.Sweets));
+                            Console.WriteLine();
+                            break;
+                        }
+                    case 6:
+                        {
+                            Console.WriteLine("Sort sweets which have chocolate");
+                            giftService.PrintAll(giftService.SortOnlyChocolable(gift.Sweets));
+                            Console.WriteLine();
+                            break;
+                        }                    
+                    case 0:
+                        {
+                            flag = false;
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
+            }
+            
             Console.WriteLine();
-            giftService.PrintAll(giftService.SortOnlyChocolable(gift.Sweets));
+            
+            Console.WriteLine();
+           
+           
+
+            
+            
 
         }
     }
