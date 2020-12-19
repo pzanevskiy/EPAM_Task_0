@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPAM_Task_0", "EPAM_Task_0\EPAM_Task_0.csproj", "{71DDC620-4D5E-4105-90DB-EDC14DA64910}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task1", "Task1\Task1.csproj", "{E635E6AB-209E-49E9-9DCE-75200B71B5B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Task1", "Task1\Task1.csproj", "{E635E6AB-209E-49E9-9DCE-75200B71B5B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextParser", "TextParser\TextParser.csproj", "{B93480E9-B3E3-4C78-A947-BDB032FF6C9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{E635E6AB-209E-49E9-9DCE-75200B71B5B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E635E6AB-209E-49E9-9DCE-75200B71B5B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E635E6AB-209E-49E9-9DCE-75200B71B5B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B93480E9-B3E3-4C78-A947-BDB032FF6C9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B93480E9-B3E3-4C78-A947-BDB032FF6C9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B93480E9-B3E3-4C78-A947-BDB032FF6C9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B93480E9-B3E3-4C78-A947-BDB032FF6C9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
