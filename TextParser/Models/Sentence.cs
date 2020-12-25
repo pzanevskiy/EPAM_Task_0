@@ -2,59 +2,49 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using TextParser.Models.Enums;
 
 namespace TextParser.Models
 {
     public class Sentence
     {
-        private ICollection<ISentenceItem> _sentenceItems;
+        private IList<ISentenceItem> _sentenceItems;
+        private SentenceType _sentenceType;
 
-        public ICollection<ISentenceItem> SentenceItems
+        public IList<ISentenceItem> SentenceItems
         {
             get => _sentenceItems;
             set => _sentenceItems = value;
         }
 
-        public Sentence(string sentence)
+        public SentenceType TypeOfSentence
+        {
+            get => _sentenceType;
+            set => _sentenceType = value.Equals(null) ? SentenceType.NARRATIVE : value;
+        }
+
+        public Sentence()
         {
             SentenceItems = new List<ISentenceItem>();
-            string[] words = sentence.Split(new string[] { " ","\t" }, StringSplitOptions.RemoveEmptyEntries);
-            foreach(string word in words)
-            {
-                bool flag = false;
-                string tempPunct="";
-                foreach(char ch in new char[] { ',',':'})
-                {
-                    if (word.Contains(ch))
-                    {
-                        flag = true;
-                        tempPunct = String.Format("{0}",ch);
-                        break;                      
-                    }
-                }
-                if (flag)
-                {
-                    string wordTemp = word.Replace(tempPunct, "");
-                    SentenceItems.Add(new Word(wordTemp));
-                    SentenceItems.Add(new Punctuation(tempPunct));
-                }
-                else
-                {
-                    SentenceItems.Add(new Word(word));
-                }
-                
-            }
+            TypeOfSentence = SentenceType.NARRATIVE;
+        }
+
+        public Sentence(IList<ISentenceItem> words)
+        {
+            SentenceItems = words;           
         }
         public override string ToString()
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            foreach(var item in SentenceItems)
+            StringBuilder stringBuilder = new StringBuilder();            
+            for(int i = 0; i < SentenceItems.Count; i++)
             {
-                if(item is Word)
+                if(SentenceItems[i] is Word && SentenceItems[i+1] is Punctuation)
                 {
-                    stringBuilder.Append(" ");
+                    stringBuilder.Append(SentenceItems[i]);
+                    continue;
                 }
-                stringBuilder.Append(item);
+                stringBuilder.Append(SentenceItems[i]);
+                stringBuilder.Append(" ");                   
             }
             return stringBuilder.ToString();
         }

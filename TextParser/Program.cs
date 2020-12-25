@@ -1,5 +1,6 @@
 ﻿using System;
 using TextParser.Models;
+using TextParser.Service;
 
 namespace TextParser
 {
@@ -7,10 +8,10 @@ namespace TextParser
     {
         static void Main(string[] args)
         {
-            Word word = new Word("hello");
-            Sentence sentence = new Sentence("Hello,\t its                   me ");
-            sentence.SentenceItems.Add(word);
-            Console.WriteLine(sentence.ToString());
+            Word word = new Word("hello");                  
+            Parser parser = new Parser();
+            parser.ParseText("Hel, lo... Its: me. This is?! text pa; rser!");
+            Console.WriteLine();           
         }
     }
 }
