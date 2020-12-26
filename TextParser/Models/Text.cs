@@ -6,9 +6,9 @@ namespace TextParser.Models
 {
     public class Text
     {
-        private IList<Sentence> _sentences;
+        private ICollection<Sentence> _sentences;
 
-        public IList<Sentence> Sentences
+        public ICollection<Sentence> Sentences
         {
             get => _sentences;
             set => _sentences = value;
@@ -18,6 +18,11 @@ namespace TextParser.Models
         {
             Sentences = new List<Sentence>();
         }        
+
+        public Text(ICollection<Sentence> sentences)
+        {
+            Sentences = sentences;
+        }
 
         public void Add(Sentence sentence)
         {

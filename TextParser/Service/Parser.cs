@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using TextParser.Models;
 using TextParser.Models.Separators;
+using TextParser.Models.Enums;
+using System.IO;
 
 namespace TextParser.Service
 {
@@ -18,19 +20,35 @@ namespace TextParser.Service
             _sentenceSeparators = new SentenceSeparators();
         }
 
-        public Text ParseText(string source)
+        public Text ParseText(StreamReader reader)
         {
             Text text = new Text();
             StringBuilder sb = new StringBuilder();
-            var sentences = source.Split(_sentenceSeparators.GetSeparators(), StringSplitOptions.RemoveEmptyEntries);
-            var separators = source.Split(sentences, StringSplitOptions.RemoveEmptyEntries);
-            IEnumerable<Tuple<string, string>> tuples = sentences.Zip(separators, (sentence, separator) => new Tuple<string, string>(sentence, separator));
-            foreach(var tuple in tuples)
+            using (reader)
             {
-                text.Add(ParseSentence(tuple));
+               
+                while (reader.Peek() >= 0)
+                {
+                    StringBuilder line = new StringBuilder(reader.ReadLine());
+                    if (sb.ToString() !="")
+                    {
+                        line.Insert(0,sb);
+                        sb.Clear();
+                    }
+                    var sentences = line.ToString().Split(_sentenceSeparators.GetSeparators(), StringSplitOptions.RemoveEmptyEntries);
+                    var separators = line.ToString().Split(sentences, StringSplitOptions.RemoveEmptyEntries);
+                    if (sentences.Length > separators.Length)
+                    {
+                        sb.Append(sentences[sentences.Length - 1]);
+                        sb.Append(" ");
+                    }
+                    IEnumerable<Tuple<string, string>> tuples = sentences.Zip(separators, (sentence, separator) => new Tuple<string, string>(sentence, separator));
+                    foreach (var tuple in tuples)
+                    {
+                        text.Add(ParseSentence(tuple));
+                    }
+                }
             }
-            Console.WriteLine(text.ToString());
-            Console.WriteLine();
             return text;
         }
 
@@ -39,42 +57,41 @@ namespace TextParser.Service
             Sentence sentence = new Sentence();
             var words = sentenceTuple.Item1.Split(new string[] { " ","\t"},StringSplitOptions.RemoveEmptyEntries);
             foreach (string word in words)
-            {
-                bool flag = false;
-                string tempPunct = "";
-                foreach (string separator in _wordSeparators.GetSeparators())
+            {               
+                var separator = _wordSeparators.GetSeparators().Where(x => word.IndexOf(x) >= 0).FirstOrDefault();
+                
+                if (separator!=null)
                 {
-                    if (word.Contains(separator))
-                    {
-                        flag = true;
-                        tempPunct = separator;
-                        break;
-                    }
-                }
-                if (flag)
-                {
-                    string wordTemp = word.Replace(tempPunct, "");
-                    sentence.SentenceItems.Add(new Word(wordTemp));
-                    sentence.SentenceItems.Add(new Punctuation(tempPunct));
+                    string wordTemp = word.Replace(separator, "");
+                    sentence.Add(new Word(wordTemp));
+                    sentence.Add(new Punctuation(separator));
                     continue;
                 }                
-                sentence.SentenceItems.Add(new Word(word));   
+                sentence.Add(new Word(word));   
             }
-            switch (sentenceTuple.Item2)
+
+            SetSentenceType(sentence,sentenceTuple.Item2);
+            sentence.SentenceItems.Add(new Punctuation(sentenceTuple.Item2));
+            return sentence;
+        }
+
+        private void SetSentenceType(Sentence sentence, string endMark)
+        {
+            switch (endMark)
             {
                 case ".":
                     {
-                        sentence.TypeOfSentence = Models.Enums.SentenceType.NARRATIVE;
+                        sentence.TypeOfSentence = SentenceType.NARRATIVE;
                         break;
                     }
                 case "?":
                     {
-                        sentence.TypeOfSentence = Models.Enums.SentenceType.INTERROGATIVE;
+                        sentence.TypeOfSentence = SentenceType.INTERROGATIVE;
                         break;
                     }
                 case "!":
                     {
-                        sentence.TypeOfSentence = Models.Enums.SentenceType.EXCLAMATION;
+                        sentence.TypeOfSentence = SentenceType.EXCLAMATION;
                         break;
                     }
                 default:
@@ -82,8 +99,6 @@ namespace TextParser.Service
                         break;
                     }
             }
-            sentence.SentenceItems.Add(new Punctuation(sentenceTuple.Item2));
-            return sentence;
         }
     }
 }

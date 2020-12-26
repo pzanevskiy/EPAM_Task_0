@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using TextParser.Models.Interfaces;
 
 namespace TextParser.Models
 {
-    public class Word : ISentenceItem
+    public class Word : IWord
     {
         private ICollection<Symbol> _symbols;
 
@@ -13,6 +14,11 @@ namespace TextParser.Models
         {
             get => _symbols;
             set => _symbols=value;
+        }
+
+        public int Count
+        {
+            get => _symbols.Count;
         }
 
         public Word(string word)
@@ -37,5 +43,7 @@ namespace TextParser.Models
             }
             return sb.ToString();
         }
+
+       
     }
 }
