@@ -17,23 +17,85 @@ namespace TextParser
             IParser parser = new Parser();
             IText text = new Text();
             IFileService fileService = new FileService();
-
-            text = parser.ParseText(fileService.GetReader("Text.txt"));
-
-            TextService textService = new TextService();
-            //var temp = textService.GetInterrogativeSentencesWordsWithLength(text.Sentences, Convert.ToInt32(Console.ReadLine()));
-            //foreach (var item in temp)
-            //{
-            //    Console.WriteLine(item);
-            //}
-            foreach (var item in text.Sentences)
-                textService.ReplaceWords(item, 5, "helloWorld");
-            //text.Sentences=textServices.RemoveWordsStartsWithConsonants(text.Sentences);
-            //text.Sentences=textServices.SortSentences(text.Sentences);
+            ITextService textService = new TextService();
+            int choose;
+            bool flag = true;
+            while (flag)
+            {
+                Console.WriteLine("1-Get text\n" +
+                    "2-get words in interrogative sentences of given length\n" +
+                    "3-sort sentences\n" +
+                    "4-replace words\n" +
+                    "5-remove words start with consonant of given length\n" +
+                    "0-exit");
+                choose = Convert.ToInt32(Console.ReadLine());
+                Console.Clear();
+                switch (choose)
+                {
+                    case 1:
+                        {
+                            if (text != null)
+                            {
+                                text = parser.ParseText(fileService.GetReader("Text.txt"));
+                            }
+                            break;
+                        }
+                    case 2:
+                        {
+                            Console.Write("Enter word length");
+                            int length = int.Parse(Console.ReadLine());
+                            var temp = textService.GetInterrogativeSentencesWordsWithLength(text.Sentences,length);
+                            if (temp != null)
+                            {
+                                foreach (var item in temp)
+                                {
+                                    Console.WriteLine(item);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Not found");
+                            }                           
+                            break;
+                        }
+                    case 3:
+                        {
+                            text.Sentences=textService.SortSentences(text.Sentences);
+                            Console.WriteLine(text);
+                            break;
+                        }
+                    case 4:
+                        {
+                            Console.Write("Enter word length");
+                            int length = int.Parse(Console.ReadLine());
+                            Console.Write("Enter word to replace");
+                            string newWord = Console.ReadLine();
+                            foreach (var item in text.Sentences)
+                                textService.ReplaceWords(item, length, newWord);
+                            Console.WriteLine(text);
+                            break;
+                        }
+                    case 5:
+                        {
+                            Console.Write("Enter word length");
+                            int length = int.Parse(Console.ReadLine());
+                            text.Sentences=textService.RemoveWordsStartsWithConsonants(text.Sentences,length);
+                            Console.WriteLine(text);
+                            break;
+                        }
+                    case 0:
+                        {
+                            flag = false;
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
+            }                                               
             fileService.Write(text);
-            //Hel, lo... Its: me.This is? !text pa; rser!
-            Console.WriteLine(text.ToString());         
-            
+            //Hel, lo... Its: me.This is? !text pa; rser!                        
         }
     }
 }
