@@ -6,6 +6,7 @@ using TextParser.Models;
 using TextParser.Models.Separators;
 using TextParser.Models.Enums;
 using System.IO;
+using TextParser.Models.Interfaces;
 
 namespace TextParser.Service
 {
@@ -20,9 +21,9 @@ namespace TextParser.Service
             _sentenceSeparators = new SentenceSeparators();
         }
 
-        public Text ParseText(StreamReader reader)
+        public IText ParseText(StreamReader reader)
         {
-            Text text = new Text();
+            IText text = new Text();
             StringBuilder sb = new StringBuilder();
             using (reader)
             {
@@ -52,9 +53,9 @@ namespace TextParser.Service
             return text;
         }
 
-        private Sentence ParseSentence(Tuple<string,string> sentenceTuple)
+        private ISentence ParseSentence(Tuple<string,string> sentenceTuple)
         {
-            Sentence sentence = new Sentence();
+            ISentence sentence = new Sentence();
             var words = sentenceTuple.Item1.Split(new string[] { " ","\t"},StringSplitOptions.RemoveEmptyEntries);
             foreach (string word in words)
             {               
@@ -71,11 +72,11 @@ namespace TextParser.Service
             }
 
             SetSentenceType(sentence,sentenceTuple.Item2);
-            sentence.SentenceItems.Add(new Punctuation(sentenceTuple.Item2));
+            sentence.Add(new Punctuation(sentenceTuple.Item2));
             return sentence;
         }
 
-        private void SetSentenceType(Sentence sentence, string endMark)
+        private void SetSentenceType(ISentence sentence, string endMark)
         {
             switch (endMark)
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using TextParser.Models;
+using TextParser.Models.Interfaces;
 
 namespace TextParser.Service
 {
@@ -13,7 +14,7 @@ namespace TextParser.Service
             return new StreamReader(filename);
         }
 
-        public void Write(Text text)
+        public void Write(IText text)
         {
             using(StreamWriter writer=new StreamWriter("C:\\Users\\Павел\\source\\repos\\EPAM_Task_0\\TextParser\\Resources\\Answer.txt", false))
             {

@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TextParser.Models.Interfaces;
 
 namespace TextParser.Models
 {
-    public class Text
+    public class Text : IText
     {
-        private ICollection<Sentence> _sentences;
+        private ICollection<ISentence> _sentences;
 
-        public ICollection<Sentence> Sentences
+        public ICollection<ISentence> Sentences
         {
             get => _sentences;
             set => _sentences = value;
@@ -16,15 +17,15 @@ namespace TextParser.Models
 
         public Text()
         {
-            Sentences = new List<Sentence>();
+            Sentences = new List<ISentence>();
         }        
 
-        public Text(ICollection<Sentence> sentences)
+        public Text(ICollection<ISentence> sentences)
         {
             Sentences = sentences;
         }
 
-        public void Add(Sentence sentence)
+        public void Add(ISentence sentence)
         {
             if (Sentences != null)
             {

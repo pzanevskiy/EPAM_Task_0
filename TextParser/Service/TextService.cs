@@ -9,13 +9,13 @@ using TextParser.Models.Interfaces;
 
 namespace TextParser.Service
 {
-    public class TextServices
+    public class TextService
     {
-        public IEnumerable<IWord> getInterrogativeSentencesWordsWithLength(ICollection<Sentence> sentences, int length)
+        public IEnumerable<IWord> GetInterrogativeSentencesWordsWithLength(ICollection<ISentence> sentences, int length)
         {         
             return sentences
                 .Where(x => x.TypeOfSentence.Equals(SentenceType.INTERROGATIVE)).ToList()
-                .SelectMany(y => y.SentenceItems.Where(x => x is IWord word && word.Count == length))
+                .SelectMany(y => y.Words.Where(x => x is IWord word && word.Count == length))
                 .Cast<IWord>()
                 .Distinct(new WordComparer());
 
@@ -23,31 +23,24 @@ namespace TextParser.Service
 
         public void ReplaceWords(ISentence sentence, int length, string newWord)
         {       
-            foreach(var word in sentence.Words.Where(x => x is IWord).ToList())
-            {
+            foreach(var word in sentence.Words.Where(x => x is IWord word && word.Count==length).ToList())
                 sentence.Replace(word, new Word(newWord));
-            }
         }
 
-        public ICollection<Sentence> SortSentences(ICollection<Sentence> sentences)
+        public ICollection<ISentence> SortSentences(ICollection<ISentence> sentences)
         {
             return sentences.OrderBy(sentence => sentence.Count).ToList();
         }
 
-        public ICollection<Sentence> RemoveWordsStartsWithConsonants(ICollection<Sentence> sentences)
+        public ICollection<ISentence> RemoveWordsStartsWithConsonants(ICollection<ISentence> sentences)
         {
-            string pattern = @"[aeiou]";
-            
+            string pattern = @"[\daeiou]";            
             var words= sentences
-                .SelectMany(x => x.SentenceItems
-                .Where(y => y is IWord word && word.Count == 5 && !Regex.IsMatch(word.FirstChar, pattern)));           
+                .SelectMany(x => x.Words
+                .Where(y => y is IWord word && word.Count == 5 && !Regex.IsMatch(word.FirstChar, pattern)));
             foreach (var sentence in sentences)
-            {
                 foreach (var word in words.ToList())
-                {
                     sentence.Remove(word);
-                }
-            }           
             return sentences;
         }
 
