@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Linq;
 using System.Collections.Generic;
 using TextParser.Models.Interfaces;
+using TextParser.Service.Interfaces;
 
 namespace TextParser
 {
@@ -13,11 +14,11 @@ namespace TextParser
     {
         static void Main(string[] args)
         {                               
-            Parser parser = new Parser();
+            IParser parser = new Parser();
             IText text = new Text();
-            FileService fileService = new FileService();
+            IFileService fileService = new FileService();
 
-            text = parser.ParseText(fileService.GetReader("C:\\Users\\Павел\\source\\repos\\EPAM_Task_0\\TextParser\\Resources\\Text.txt"));
+            text = parser.ParseText(fileService.GetReader("Text.txt"));
 
             TextService textService = new TextService();
             //var temp = textService.GetInterrogativeSentencesWordsWithLength(text.Sentences, Convert.ToInt32(Console.ReadLine()));
@@ -26,7 +27,7 @@ namespace TextParser
             //    Console.WriteLine(item);
             //}
             foreach (var item in text.Sentences)
-                textService.ReplaceWords(item, 2, "helloWorld");
+                textService.ReplaceWords(item, 5, "helloWorld");
             //text.Sentences=textServices.RemoveWordsStartsWithConsonants(text.Sentences);
             //text.Sentences=textServices.SortSentences(text.Sentences);
             fileService.Write(text);

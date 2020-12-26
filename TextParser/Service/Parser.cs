@@ -7,10 +7,11 @@ using TextParser.Models.Separators;
 using TextParser.Models.Enums;
 using System.IO;
 using TextParser.Models.Interfaces;
+using TextParser.Service.Interfaces;
 
 namespace TextParser.Service
 {
-    public class Parser
+    public class Parser : IParser
     {
         private WordSeparators _wordSeparators;
         private SentenceSeparators _sentenceSeparators;

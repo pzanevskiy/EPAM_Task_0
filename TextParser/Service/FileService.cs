@@ -4,10 +4,11 @@ using System.IO;
 using System.Text;
 using TextParser.Models;
 using TextParser.Models.Interfaces;
+using TextParser.Service.Interfaces;
 
 namespace TextParser.Service
 {
-    public class FileService
+    public class FileService : IFileService
     {
         public StreamReader GetReader(string filename)
         {
@@ -16,7 +17,7 @@ namespace TextParser.Service
 
         public void Write(IText text)
         {
-            using(StreamWriter writer=new StreamWriter("C:\\Users\\Павел\\source\\repos\\EPAM_Task_0\\TextParser\\Resources\\Answer.txt", false))
+            using(StreamWriter writer=new StreamWriter("Answer.txt", false))
             {
                 foreach(var sentence in text.Sentences)
                 {
