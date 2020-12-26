@@ -26,8 +26,8 @@ namespace TextParser
             //{
             //    Console.WriteLine(item);
             //}
-            textServices.RemoveWords(text.Sentences);
-            text.Sentences=textServices.SortSentences(text.Sentences);
+            text.Sentences=textServices.RemoveWordsStartsWithConsonants(text.Sentences);
+            //text.Sentences=textServices.SortSentences(text.Sentences);
             fileService.Write(text);
             //Hel, lo... Its: me.This is? !text pa; rser!
             Console.WriteLine(text.ToString());         

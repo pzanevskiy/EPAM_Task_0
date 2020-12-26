@@ -16,10 +16,9 @@ namespace TextParser.Models
             set => _symbols=value;
         }
 
-        public int Count
-        {
-            get => _symbols.Count;
-        }
+        public int Count => _symbols.Count;
+
+        public string FirstChar => _symbols.First().Chars;
 
         public Word(string word)
         {

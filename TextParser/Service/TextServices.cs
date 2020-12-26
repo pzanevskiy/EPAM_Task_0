@@ -34,9 +34,21 @@ namespace TextParser.Service
             return sentences.OrderBy(sentence => sentence.Count).ToList();
         }
 
-        public void RemoveWords(ICollection<Sentence> sentences)
+        public ICollection<Sentence> RemoveWordsStartsWithConsonants(ICollection<Sentence> sentences)
         {
-           
+            string pattern = @"[aeiou]";
+            
+            var words= sentences
+                .SelectMany(x => x.SentenceItems
+                .Where(y => y is IWord word && word.Count == 5 && !Regex.IsMatch(word.FirstChar, pattern)));           
+            foreach (var sentence in sentences)
+            {
+                foreach (var word in words.ToList())
+                {
+                    sentence.Remove(word);
+                }
+            }           
+            return sentences;
         }
 
     }
