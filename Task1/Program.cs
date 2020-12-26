@@ -12,7 +12,7 @@ namespace Task1
     class Program
     {
         static void Main(string[] args)
-        {
+        {          
             ICollection<Sweet> sweets = new List<Sweet>
             {
                 new ChocolateCandy("",23,45,55),

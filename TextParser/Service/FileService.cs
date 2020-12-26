@@ -10,14 +10,11 @@ namespace TextParser.Service
 {
     public class FileService : IFileService
     {
-        public StreamReader GetReader(string filename)
-        {
-            return new StreamReader(filename);
-        }
+        public StreamReader GetReader(string filename) => new StreamReader(filename);
 
-        public void Write(IText text)
+        public void Write(IText text,string filename)
         {
-            using(StreamWriter writer=new StreamWriter("Answer.txt", false))
+            using(StreamWriter writer=new StreamWriter(filename, false))
             {
                 foreach(var sentence in text.Sentences)
                 {

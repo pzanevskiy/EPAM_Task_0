@@ -9,6 +9,6 @@ namespace TextParser.Service.Interfaces
     public interface IFileService
     {
         public StreamReader GetReader(string filename);
-        public void Write(IText text);
+        public void Write(IText text, string filename);
     }
 }

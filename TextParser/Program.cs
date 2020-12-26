@@ -2,18 +2,20 @@
 using System.IO;
 using TextParser.Models;
 using TextParser.Service;
-using System.Configuration;
 using System.Linq;
 using System.Collections.Generic;
 using TextParser.Models.Interfaces;
 using TextParser.Service.Interfaces;
+using System.Configuration;
 
 namespace TextParser
 {
     class Program
     {
         static void Main(string[] args)
-        {                               
+        {
+            var app = ConfigurationManager.AppSettings;
+            
             IParser parser = new Parser();
             IText text = new Text();
             IFileService fileService = new FileService();
@@ -36,7 +38,7 @@ namespace TextParser
                         {
                             if (text != null)
                             {
-                                text = parser.ParseText(fileService.GetReader("Text.txt"));
+                                text = parser.ParseText(fileService.GetReader(app["text"]));
                             }
                             break;
                         }
@@ -94,7 +96,7 @@ namespace TextParser
                         }
                 }
             }                                               
-            fileService.Write(text);
+            fileService.Write(text,app["answer"]);
             //Hel, lo... Its: me.This is? !text pa; rser!                        
         }
     }
