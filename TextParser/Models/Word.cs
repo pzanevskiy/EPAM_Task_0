@@ -18,7 +18,7 @@ namespace TextParser.Models
 
         public int Count => _symbols.Count;
 
-        public string FirstChar => _symbols.First().Chars;
+        public string FirstChar => _symbols.FirstOrDefault().Chars;
 
         public Word(string word)
         {

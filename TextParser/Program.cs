@@ -40,11 +40,12 @@ namespace TextParser
                             {
                                 text = parser.ParseText(fileService.GetReader(app["text"]));
                             }
+                            Console.WriteLine(text);
                             break;
                         }
                     case 2:
                         {
-                            Console.Write("Enter word length");
+                            Console.Write("Enter word length ");
                             int length = int.Parse(Console.ReadLine());
                             var temp = textService.GetInterrogativeSentencesWordsWithLength(text.Sentences,length);
                             if (temp != null)
@@ -68,9 +69,9 @@ namespace TextParser
                         }
                     case 4:
                         {
-                            Console.Write("Enter word length");
+                            Console.Write("Enter word length ");
                             int length = int.Parse(Console.ReadLine());
-                            Console.Write("Enter word to replace");
+                            Console.Write("Enter word to replace ");
                             string newWord = Console.ReadLine();
                             foreach (var item in text.Sentences)
                                 textService.ReplaceWords(item, length, newWord);
@@ -79,7 +80,7 @@ namespace TextParser
                         }
                     case 5:
                         {
-                            Console.Write("Enter word length");
+                            Console.Write("Enter word length ");
                             int length = int.Parse(Console.ReadLine());
                             text.Sentences=textService.RemoveWordsStartsWithConsonants(text.Sentences,length);
                             Console.WriteLine(text);
@@ -96,8 +97,7 @@ namespace TextParser
                         }
                 }
             }                                               
-            fileService.Write(text,app["answer"]);
-            //Hel, lo... Its: me.This is? !text pa; rser!                        
+            fileService.Write(text,app["answer"]);                                 
         }
     }
 }
