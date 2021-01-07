@@ -4,11 +4,12 @@ using System.Text;
 
 namespace Task3.Models.Enums
 {
-    public enum PortState
+    public enum CallState
     {
-        Free,
-        ConnectedTerminal,
-        Busy,       
-        Disconnected
+        Outgoing,
+        Incoming,
+        Rejected,
+        Missed,
+        NoAnswer
     }
 }

@@ -45,7 +45,7 @@ namespace Task3.Models
         {
             StateChanged += (sender, eventArgs) =>
             {
-                Console.WriteLine($"Port {Id} state canged to {eventArgs}");
+                Console.WriteLine($"Port #{Id} state changed to {eventArgs}");
             };
         }
         
