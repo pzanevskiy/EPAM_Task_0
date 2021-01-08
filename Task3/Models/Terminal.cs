@@ -146,8 +146,8 @@ namespace Task3.Models
         }
 
         public void ConnectToPort(Port port)
-        {
-            if (port.State == Enums.PortState.Free)
+        {            
+            if (port.State == Enums.PortState.Free && Port==null)
             {
                 Port = port;
                 Port.ChangeState(Enums.PortState.ConnectedTerminal);
@@ -198,6 +198,11 @@ namespace Task3.Models
             return obj is Terminal terminal &&
                    EqualityComparer<PhoneNumber>.Default.Equals(_phoneNumber, terminal._phoneNumber) &&
                    EqualityComparer<Port>.Default.Equals(_port, terminal._port);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_phoneNumber);
         }
     }
 }

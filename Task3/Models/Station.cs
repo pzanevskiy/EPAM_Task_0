@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Task3.Models.Controllers;
+using Task3.Models.Enums;
 
 namespace Task3.Models
 {
@@ -10,20 +12,24 @@ namespace Task3.Models
         //private ICollection<Port> _portsCollection;
         //private ICollection<Terminal> _terminalsCollection;
 
-        public ICollection<Port> Ports { get; set; }
-        public ICollection<Terminal> Terminals { get; set; }
-        public ICollection<CallInfo> Calls { get; set; }
+        private PortController _portController;
+        private TerminalController _terminalController;
+        private CallController _callController;
 
         public event EventHandler<CallInfo> Call;
 
-        public Station(ICollection<Port> ports, ICollection<Terminal> terminals)
+        public Station()
         {
-            Ports = ports;
-            Terminals = terminals;
-            Calls = new List<CallInfo>();
-            foreach(var item in Ports)
+            _portController = new PortController();
+            _terminalController = new TerminalController();
+            _callController = new CallController();
+        }
+
+        public Station(ICollection<Port> ports, ICollection<Terminal> terminals) : this()
+        {                       
+            foreach(var item in ports)
             {
-                item.State = Enums.PortState.Free;
+                _portController.AddPort(item);
             }
         }
         
@@ -32,36 +38,46 @@ namespace Task3.Models
             Call?.Invoke(sender, call);
         }
 
-        public Terminal FindTerminalByNumber(PhoneNumber number)
-        {
-            return Terminals.FirstOrDefault(x => x.Number == number);
-        }
-
         public Port GetFreePort()
         {
-            return Ports.Where(x => x.State == Enums.PortState.Free).FirstOrDefault();
+            return _portController.GetFreePort();
         }
 
-
-
         public void AddPort(Port port)
-        {          
-            port.State = Enums.PortState.Free;            
-            Ports.Add(port);
+        {
+            _portController.AddPort(port);
         }
 
         public void AddTerminal(Terminal terminal)
         {
-            terminal.OutgoingCall+= (sender, phone) =>
-            {                
-                var answerer = FindTerminalByNumber(phone);
-                var caller = sender as Terminal;
-                
-                if (answerer != null && caller!=null)
+            RegisterEventHandlersForTerminal(terminal);
+            _terminalController.AddTerminal(terminal);
+        }
+
+        public ICollection<Terminal> GetTerminals()
+        {
+            return _terminalController.Terminals;
+        }
+        
+        private void RegisterEventHandlersForTerminal(Terminal terminal)
+        {
+            terminal.OutgoingCall += OnOutgoingCall;
+            terminal.IncomingCall += OnIncomingCall;
+            terminal.Accept += OnAccept;
+            terminal.End += OnEnd;
+            terminal.Reject += OnReject;
+        }
+
+        private void OnOutgoingCall(object sender,PhoneNumber phone)
+        {
+            var answerer = _terminalController.FindTerminalByNumber(phone);
+            var caller = sender as Terminal;
+
+            if (answerer != null && caller != null)
+            {
+                if (answerer.Port.State != PortState.Busy)
                 {
-                   // answerer.Port.ChangeState(Enums.PortState.Busy);
-                    caller.Port.ChangeState(Enums.PortState.Busy);
-                   // answerer.RememberConnection(phone, caller.Number);
+                    caller.Port.ChangeState(PortState.Busy);
                     caller.RememberConnection(caller.Number, phone);
                     CallInfo info = new CallInfo
                     {
@@ -69,97 +85,98 @@ namespace Task3.Models
                         To = phone,
                         DateTimeStart = DateTime.Now,
                     };
-                    AddCall(info);
-                    //add callinfo to billing system
-                    answerer.GetCall(caller.Number);                    
+                    _callController.AddCall(info);
+                    answerer.GetCall(caller.Number);
                 }
                 else
                 {
-                    Console.WriteLine($"{new Exception("Phone not binded to terminal")}");
+                    caller.Port.ChangeState(PortState.Busy);
+                    caller.RememberConnection(caller.Number, phone);
+                    CallInfo info = new CallInfo
+                    {
+                        From = caller.Number,
+                        To = phone,
+                        DateTimeStart = DateTime.Now,
+                    };
+                    _callController.AddCall(info);
+                    Console.WriteLine($"Terminal is busy");
                     caller.RejectCall();
                 }
 
-            };
-            terminal.IncomingCall += (sender, phone) =>
+            }
+            else
             {
-                var answerer = sender as Terminal;
-                //var info=
-                answerer.Port.ChangeState(Enums.PortState.Busy);
-                answerer.RememberConnection(phone,answerer.Number);
-            };
-            terminal.Accept += (sender, e) =>
-            {
+                Console.WriteLine($"{new Exception("Phone not binded to terminal")}");
+                caller.RejectCall();
+            }
+        }
 
-            };
-            terminal.End+=(sender, e) =>
-            {
+        private void OnIncomingCall(object sender,PhoneNumber phone)
+        {
+            var answerer = sender as Terminal;
+            answerer.Port.ChangeState(PortState.Busy);
+            answerer.RememberConnection(phone, answerer.Number);
+        }
 
-                var caller = FindTerminalByNumber((sender as Terminal).Connection.From);
-                var info = GetCallInfo(caller.Connection);
-                info.Duration = DateTime.Now - info.DateTimeStart;
-                info.Terminal = caller;
-                info.CallState = Enums.CallState.Outgoing;
-                OnCall(this, info);
-                var answerer = FindTerminalByNumber(caller.Connection.To);
-                CallInfo info1 = info.Copy();
-                info1.Terminal = answerer;
-                info1.CallState = Enums.CallState.Incoming;               
-                OnCall(this, info1);
-                RemoveCall(info);
-                // Console.WriteLine("{0:hh\\:mm\\:ss}",info.Duration);
-                caller.Port.ChangeState(Enums.PortState.ConnectedTerminal);
-                answerer.Port.ChangeState(Enums.PortState.ConnectedTerminal);
+        private void OnAccept(object sender, EventArgs e)
+        {
+            var caller = _terminalController.FindTerminalByNumber((sender as Terminal).Connection.From);
+            var info = _callController.GetCallInfo(caller.Connection);
+            info.DateTimeStart = DateTime.Now;
+        }
 
-            };
-            terminal.Reject += (sender, e) =>
+        private void OnEnd(object sender, EventArgs e)
+        {
+            var caller = _terminalController.FindTerminalByNumber((sender as Terminal).Connection.From);
+            var info = _callController.GetCallInfo(caller.Connection);
+            info.Duration = DateTime.Now - info.DateTimeStart;
+            info.Terminal = caller;
+            info.CallState = CallState.Outgoing;
+            OnCall(this, info);
+            var answerer = _terminalController.FindTerminalByNumber(caller.Connection.To);
+            CallInfo info1 = info.Copy();
+            info1.Terminal = answerer;
+            info1.CallState = CallState.Incoming;
+            OnCall(this, info1);
+            _callController.RemoveCall(info);
+            caller.Port.ChangeState(PortState.ConnectedTerminal);
+            answerer.Port.ChangeState(PortState.ConnectedTerminal);
+        }
+
+        private void OnReject(object sender, EventArgs e)
+        {
+            if ((sender as Terminal).Connection != null)
             {
-                var caller = FindTerminalByNumber((sender as Terminal).Connection.From);
-                var info = GetCallInfo(caller.Connection);
-                var answerer = FindTerminalByNumber(caller.Connection.To);
+                var caller = _terminalController.FindTerminalByNumber((sender as Terminal).Connection.From);
+                var info = _callController.GetCallInfo(caller.Connection);
+                var answerer = _terminalController.FindTerminalByNumber(caller.Connection.To);
                 info.Duration = TimeSpan.Zero;
 
                 if (caller.Equals(sender))
                 {
-                    info.CallState = Enums.CallState.NoAnswer;
+                    info.CallState = CallState.NoAnswer;
                     info.Terminal = caller;
                     OnCall(this, info);
                     CallInfo info1 = info.Copy();
-                    info1.CallState = Enums.CallState.Missed;
+                    info1.CallState = CallState.Missed;
                     info1.Terminal = answerer;
                     OnCall(this, info1);
                 }
                 else
                 {
-                    info.CallState = Enums.CallState.Rejected;
-                    info.Terminal =answerer;
+                    info.CallState = CallState.Rejected;
+                    info.Terminal = answerer;
                     OnCall(this, info);
                     CallInfo info1 = info.Copy();
-                    info1.CallState = Enums.CallState.Missed;
-                    info1.Terminal = caller; 
+                    info1.CallState = CallState.NoAnswer;
+                    info1.Terminal = caller;
                     OnCall(this, info1);
                 }
 
-                RemoveCall(info);
-                // Console.WriteLine("{0:hh\\:mm\\:ss}",info.Duration);
-                caller.Port.ChangeState(Enums.PortState.ConnectedTerminal);
-                answerer.Port.ChangeState(Enums.PortState.ConnectedTerminal);
-
-            };
-            Terminals.Add(terminal);
-        }
-        
-        private void AddCall(CallInfo call)
-        {
-            Calls.Add(call);
-        }
-       
-        private void RemoveCall(CallInfo call)
-        {
-            Calls.Remove(call);
-        }
-        private CallInfo GetCallInfo(Connection connection)
-        {
-            return Calls.FirstOrDefault(x => x.From.Equals(connection.From) && x.To.Equals(connection.To));
+                _callController.RemoveCall(info);
+                caller.Port.ChangeState(PortState.ConnectedTerminal);
+                answerer.Port.ChangeState(PortState.ConnectedTerminal);
+            }
         }
     }
 }
