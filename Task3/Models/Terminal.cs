@@ -124,10 +124,7 @@ namespace Task3.Models
             {
                 OnAcceptCall(this, null);
             }
-            else
-            {
-
-            }
+          
         }
 
         public void RejectCall()
@@ -155,7 +152,7 @@ namespace Task3.Models
             }
             else
             {
-                Console.WriteLine($"{new Exception("Port is busy")}");
+                Console.WriteLine($"Port is busy");
             }
         }
 
@@ -169,7 +166,7 @@ namespace Task3.Models
             }
             else
             {
-                Console.WriteLine($"{new Exception("Port is null")}");
+                Console.WriteLine($"Port is null");
             }
 
         }

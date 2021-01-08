@@ -9,7 +9,7 @@ namespace Task3.Models
     {
 
         private PortState _portState;
-
+        //guid???
         public int Id { get; set; }
 
         public PortState State

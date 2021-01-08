@@ -7,6 +7,7 @@ namespace Task3.Models
 {
     public class CallInfo
     {
+        //delete terminal
         public Terminal Terminal { get; set; }
         public PhoneNumber From { get; set; }
         public PhoneNumber To { get; set; }

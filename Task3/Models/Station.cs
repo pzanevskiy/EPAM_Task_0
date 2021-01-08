@@ -106,7 +106,7 @@ namespace Task3.Models
             }
             else
             {
-                Console.WriteLine($"{new Exception("Phone not binded to terminal")}");
+                Console.WriteLine($"Phone not binded to terminal");
                 caller.RejectCall();
             }
         }
