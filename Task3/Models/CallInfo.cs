@@ -29,8 +29,8 @@ namespace Task3.Models
         {
             return $"From {From} " +
                 $"to {To}\t" +
-                $"Started at: {String.Format("{0:hh\\:mm\\:ss}", DateTimeStart)}\t" +
-                $"Duration: {String.Format("{0:hh\\:mm\\:ss}", Duration)}\t" +
+                $"Started at: {string.Format("{0:F}", DateTimeStart)}\t" +
+                $"Duration: {string.Format("{0:hh\\:mm\\:ss}", Duration)}\t" +
                 $"State: {CallState}";
         }
     }
