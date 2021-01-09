@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Task3.ATS.Models.Interfaces;
 using Task3.Models.Controllers;
 using Task3.Models.Enums;
 
 namespace Task3.Models
 {
-    public class Station
+    public class Station : IStation
     {
         private protected PortController _portController;
         //private protected TerminalController _terminalController;
@@ -22,25 +23,25 @@ namespace Task3.Models
             _callController = new CallController();
         }
 
-        public Station(ICollection<Port> ports) : this()
+        public Station(ICollection<IPort> ports) : this()
         {                       
             foreach(var item in ports)
             {
                 AddPort(item);
             }
         }
-        
-        internal virtual void OnCall(object sender, CallInfo call)
+       
+        public void OnCall(object sender, CallInfo call)
         {
             Call?.Invoke(sender, call);
         }
 
-        public Port GetFreePort()
+        public IPort GetFreePort()
         {
             return _portController.GetFreePort();
         }
 
-        public void AddPort(Port port)
+        public void AddPort(IPort port)
         {
             //port.CurrentCallAdd += (sender, e) =>
             //{
@@ -85,7 +86,7 @@ namespace Task3.Models
         //    terminal.Reject += OnReject;
         //}
 
-        public Port GetPortByPhoneNumber(PhoneNumber phone)
+        public IPort GetPortByPhoneNumber(IPhoneNumber phone)
         {
             return _portController.GetPortByPhoneNumber(phone);
         }
@@ -104,6 +105,7 @@ namespace Task3.Models
         {
             return _callController.GetCallInfo(connection);
         }
+        
 
         //private void OnOutgoingCall(object sender,PhoneNumber phone)
         //{

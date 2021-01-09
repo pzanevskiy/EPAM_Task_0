@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Task3.ATS.Models.Interfaces;
 
 namespace Task3.Models
 {
-    public class PhoneNumber : IEquatable<PhoneNumber>
+    public class PhoneNumber : IPhoneNumber
     {
         private string _phoneNumber;
 

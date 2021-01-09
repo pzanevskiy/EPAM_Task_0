@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Task3.ATS.Models.Interfaces;
 using Task3.Models.Enums;
 
 namespace Task3.Models
@@ -8,9 +9,9 @@ namespace Task3.Models
     public class CallInfo
     {
         //delete terminal
-        public Terminal Terminal { get; set; }
-        public PhoneNumber From { get; set; }
-        public PhoneNumber To { get; set; }
+        public ITerminal Terminal { get; set; }
+        public IPhoneNumber From { get; set; }
+        public IPhoneNumber To { get; set; }
         public DateTime DateTimeStart { get; set; }
         public TimeSpan Duration { get; set; }
         public CallState CallState { get; set; }

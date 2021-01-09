@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Task3.Models
+namespace Task3.Models.BillingSystem
 {
     //working in this
     public class BillingSystem

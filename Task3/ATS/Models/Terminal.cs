@@ -1,42 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Task3.ATS.Models.Interfaces;
 
 namespace Task3.Models
 {
-    public class Terminal
+    public class Terminal : ITerminal
     {
-        private PhoneNumber _phoneNumber;
-        private Port _port;
+        private IPhoneNumber _phoneNumber;
+        private IPort _port;
 
         public Connection Connection { get; set; }
 
-        public PhoneNumber Number
+        public IPhoneNumber Number
         {
             get => _phoneNumber;
             set => _phoneNumber = value;
         }
 
-        public Port Port
+        public IPort Port
         {
             get => _port;
             set => _port = value;
         }
 
-        public event EventHandler<PhoneNumber> OutgoingCall;
-        public event EventHandler<PhoneNumber> IncomingCall;
+        public event EventHandler<IPhoneNumber> OutgoingCall;
+        public event EventHandler<IPhoneNumber> IncomingCall;
         public event EventHandler Accept;
         public event EventHandler Reject;
         public event EventHandler End;
-        public event EventHandler<Port> ConnectingToPort;
-        public event EventHandler<Port> DisconnectingFromPort;
+        public event EventHandler<IPort> ConnectingToPort;
+        public event EventHandler<IPort> DisconnectingFromPort;
 
         public Terminal()
         {
 
         }
 
-        public Terminal(PhoneNumber phoneNumber)
+        public Terminal(IPhoneNumber phoneNumber)
         {
             RegisterEventHandlerForTerminal();
             Number = phoneNumber;
@@ -82,17 +83,17 @@ namespace Task3.Models
             };
         }
 
-        protected virtual void OnOnutgoingCall(object sender, PhoneNumber number)
+        protected virtual void OnOnutgoingCall(object sender, IPhoneNumber number)
         {
             OutgoingCall?.Invoke(sender, number);
         }
 
-        protected virtual void OnIncomingCall(object sender, PhoneNumber number)
+        protected virtual void OnIncomingCall(object sender, IPhoneNumber number)
         {
             IncomingCall?.Invoke(sender, number);
         }
 
-        public void Call(PhoneNumber to)
+        public void Call(IPhoneNumber to)
         {
             if (Port != null)
             {
@@ -100,7 +101,7 @@ namespace Task3.Models
             }
         }
 
-        public void GetCall(PhoneNumber from)
+        public void GetCall(IPhoneNumber from)
         {
             if (Port != null)
             {
@@ -142,7 +143,7 @@ namespace Task3.Models
             OnEndCall(this, null);
         }
 
-        public void ConnectToPort(Port port)
+        public void ConnectToPort(IPort port)
         {            
             if (port.State == Enums.PortState.Free && Port==null)
             {
@@ -173,7 +174,7 @@ namespace Task3.Models
 
         }
 
-        public void RememberConnection(PhoneNumber from, PhoneNumber to)
+        public void RememberConnection(IPhoneNumber from, IPhoneNumber to)
         {
             Connection = new Connection()
             {
@@ -195,13 +196,13 @@ namespace Task3.Models
         public override bool Equals(object obj)
         {
             return obj is Terminal terminal &&
-                   EqualityComparer<PhoneNumber>.Default.Equals(_phoneNumber, terminal._phoneNumber) &&
-                   EqualityComparer<Port>.Default.Equals(_port, terminal._port);
+                   EqualityComparer<IPhoneNumber>.Default.Equals(_phoneNumber, terminal._phoneNumber) &&
+                   EqualityComparer<IPort>.Default.Equals(_port, terminal._port);
         }
 
         public override int GetHashCode()
         {
             return HashCode.Combine(_phoneNumber);
-        }
+        }        
     }
 }

@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Task3.ATS.Models.Interfaces;
 using Task3.Models.Enums;
 
 namespace Task3.Models
 {
-    public class Port
+    public class Port : IPort
     {      
         private PortState _portState;
-        private Terminal _terminal;
+        private ITerminal _terminal;
 
         public Guid Id { get; set; }
         public PortState State
@@ -20,7 +21,7 @@ namespace Task3.Models
                 OnStateChanged(this, _portState);
             }
         }
-        public Terminal Terminal
+        public ITerminal Terminal
         {
             get => _terminal;
             set
@@ -29,14 +30,9 @@ namespace Task3.Models
                 RegisterEventHandlersForTerminal(_terminal);
             }
         }
-        public Station Station { private get; set; }
-
+        public IStation Station { get; set; }
 
         public event EventHandler<PortState> StateChanged;
-        //public event EventHandler CurrentCallAdd;
-        //public event EventHandler CurentCallRemove;
-        //public event EventHandler CurrentCallGet;
-        //public event EventHandler CurrentCallSave;
 
         public Port()
         {
@@ -58,7 +54,7 @@ namespace Task3.Models
             };
         }
 
-        private void RegisterEventHandlersForTerminal(Terminal terminal)
+        private void RegisterEventHandlersForTerminal(ITerminal terminal)
         {
             terminal.OutgoingCall += OnOutgoingCall;
             terminal.IncomingCall += OnIncomingCall;
@@ -72,7 +68,7 @@ namespace Task3.Models
             State = state;
         }
 
-        private void OnOutgoingCall(object sender, PhoneNumber phone)
+        private void OnOutgoingCall(object sender, IPhoneNumber phone)
         {
             var answerer = Station.GetPortByPhoneNumber(phone).Terminal;
             var caller = sender as Terminal;
@@ -115,7 +111,7 @@ namespace Task3.Models
             }
         }
 
-        private void OnIncomingCall(object sender, PhoneNumber phone)
+        private void OnIncomingCall(object sender, IPhoneNumber phone)
         {
             var answerer = sender as Terminal;
             answerer.Port.ChangeState(PortState.Busy);
@@ -156,7 +152,34 @@ namespace Task3.Models
                 var answerer = Station.GetPortByPhoneNumber(caller.Connection.To).Terminal;
                 info.Duration = TimeSpan.Zero;
 
-                if (caller.Equals(sender))
+                if (caller.Connection.Equals(answerer.Connection))
+                {
+                    if (caller.Equals(sender))
+                    {
+                        info.CallState = CallState.NoAnswer;
+                        info.Terminal = caller;
+                        Station.OnCall(this, info);
+                        CallInfo info1 = info.Copy();
+                        info1.CallState = CallState.Missed;
+                        info1.Terminal = answerer;
+                        Station.OnCall(this, info1);
+                    }
+                    else
+                    {
+                        info.CallState = CallState.Rejected;
+                        info.Terminal = answerer;
+                        Station.OnCall(this, info);
+                        CallInfo info1 = info.Copy();
+                        info1.CallState = CallState.NoAnswer;
+                        info1.Terminal = caller;
+                        Station.OnCall(this, info1);
+                    }
+
+                    Station.RemoveCall(info);
+                    caller.Port.ChangeState(PortState.ConnectedTerminal);
+                    answerer.Port.ChangeState(PortState.ConnectedTerminal);
+                }
+                else
                 {
                     info.CallState = CallState.NoAnswer;
                     info.Terminal = caller;
@@ -165,21 +188,8 @@ namespace Task3.Models
                     info1.CallState = CallState.Missed;
                     info1.Terminal = answerer;
                     Station.OnCall(this, info1);
+                    caller.Port.ChangeState(PortState.ConnectedTerminal);
                 }
-                else
-                {
-                    info.CallState = CallState.Rejected;
-                    info.Terminal = answerer;
-                    Station.OnCall(this, info);
-                    CallInfo info1 = info.Copy();
-                    info1.CallState = CallState.NoAnswer;
-                    info1.Terminal = caller;
-                    Station.OnCall(this, info1);
-                }
-
-                Station.RemoveCall(info);
-                caller.Port.ChangeState(PortState.ConnectedTerminal);
-                answerer.Port.ChangeState(PortState.ConnectedTerminal);
             }
         }
     }
