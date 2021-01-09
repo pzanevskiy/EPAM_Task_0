@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPAM_Task_0", "EPAM_Task_0\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Task1", "Task1\Task1.csproj", "{E635E6AB-209E-49E9-9DCE-75200B71B5B3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextParser", "TextParser\TextParser.csproj", "{B93480E9-B3E3-4C78-A947-BDB032FF6C9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Task2", "TextParser\Task2.csproj", "{B93480E9-B3E3-4C78-A947-BDB032FF6C9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task3", "Task3\Task3.csproj", "{CFBE141C-313E-4E93-A557-EA6234D14698}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Task3", "Task3\Task3.csproj", "{CFBE141C-313E-4E93-A557-EA6234D14698}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
