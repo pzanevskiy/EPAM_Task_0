@@ -28,7 +28,7 @@ namespace Task3.Models.Controllers
 
         public Terminal FindTerminalByNumber(PhoneNumber number)
         {
-            return _terminals.FirstOrDefault(x => x.Number == number);
+            return _terminals.FirstOrDefault(x => x.Number.Equals(number));
         }
     }
 }

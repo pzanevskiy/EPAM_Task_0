@@ -146,6 +146,7 @@ namespace Task3.Models
         {            
             if (port.State == Enums.PortState.Free && Port==null)
             {
+               // port.Terminal = this;
                 Port = port;
                 Port.ChangeState(Enums.PortState.ConnectedTerminal);
                 ConnectingToPort?.Invoke(this, port);
@@ -162,6 +163,7 @@ namespace Task3.Models
             {
                 DisconnectingFromPort?.Invoke(this, Port);
                 Port.ChangeState(Enums.PortState.Free);
+               // Port.Terminal = null;
                 Port = null;
             }
             else

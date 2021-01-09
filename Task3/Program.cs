@@ -10,13 +10,13 @@ namespace Task3
     {
         static void Main(string[] args)
         {           
-            Port port = new Port(3);
-            Station station = new Station(new List<Port>() { new Port(1), new Port(2) },new List<Terminal>());
+            Port port = new Port();
+            Station station = new Station(new List<Port>() { new Port(), new Port() });
             station.AddPort(port);
             BillingSystem system = new BillingSystem(station);
-            PhoneNumber p1 = new PhoneNumber("+375291234567");
-            PhoneNumber p2 = new PhoneNumber("+375298883230");
-            PhoneNumber p3 = new PhoneNumber("111");
+            PhoneNumber p1 = new PhoneNumber("11111111");
+            PhoneNumber p2 = new PhoneNumber("22222222");
+            PhoneNumber p3 = new PhoneNumber("33333333");
             Terminal t1 = new Terminal(p1);
             Terminal t2 = new Terminal(p2);
             Terminal t3 = new Terminal(p3);

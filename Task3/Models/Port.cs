@@ -7,10 +7,11 @@ namespace Task3.Models
 {
     public class Port
     {
+        //guid???
+        public Guid Id { get; set; }
 
         private PortState _portState;
-        //guid???
-        public int Id { get; set; }
+        //private Terminal _terminal;
 
         public PortState State
         {
@@ -21,20 +22,33 @@ namespace Task3.Models
                 OnStateChanged(this, _portState);
             }
         }
+        //public Terminal Terminal
+        //{
+        //    get => _terminal;
+        //    set 
+        //    {
+        //        _terminal = value;
+        //    }
+        //}
 
         public event EventHandler<PortState> StateChanged;
+        //public event EventHandler CurrentCallAdd;
+        //public event EventHandler CurentCallRemove;
+        //public event EventHandler CurrentCallGet;
+        //public event EventHandler CurrentCallSave;
 
         public Port()
         {
+            Id = Guid.NewGuid();
             RegisterEventHandlerForPort();
             State = PortState.Disconnected;
         }
-        public Port(int id)
-        {
-            Id = id;
-            RegisterEventHandlerForPort();           
-            State = PortState.Disconnected;
-        }
+        //public Port(Guid id)
+        //{
+        //    Id = id;
+        //    RegisterEventHandlerForPort();           
+        //    State = PortState.Disconnected;
+        //}
 
         protected virtual void OnStateChanged(object sender, PortState state)
         {
@@ -54,5 +68,22 @@ namespace Task3.Models
         {
             State = state;
         }
+
+        //protected virtual void OnCurrentCallAdd(object sender, EventArgs e)
+        //{
+        //    CurrentCallAdd.Invoke(sender, e);
+        //}
+        //protected virtual void OnCurrentCallRemove(object sender, EventArgs e)
+        //{
+        //    CurentCallRemove.Invoke(sender, e);
+        //}
+        //protected virtual void OnCurrentCallGet(object sender, EventArgs e)
+        //{
+        //    CurrentCallGet.Invoke(sender, e);
+        //}
+        //protected virtual void OnCurrentCallSave(object sender, EventArgs e)
+        //{
+        //    CurrentCallSave.Invoke(sender, e);
+        //}
     }
 }

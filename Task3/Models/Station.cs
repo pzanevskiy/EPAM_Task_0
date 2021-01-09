@@ -9,9 +9,6 @@ namespace Task3.Models
 {
     public class Station
     {
-        //private ICollection<Port> _portsCollection;
-        //private ICollection<Terminal> _terminalsCollection;
-
         private PortController _portController;
         private TerminalController _terminalController;
         private CallController _callController;
@@ -25,7 +22,7 @@ namespace Task3.Models
             _callController = new CallController();
         }
 
-        public Station(ICollection<Port> ports, ICollection<Terminal> terminals) : this()
+        public Station(ICollection<Port> ports) : this()
         {                       
             foreach(var item in ports)
             {
@@ -45,6 +42,25 @@ namespace Task3.Models
 
         public void AddPort(Port port)
         {
+            //port.CurrentCallAdd += (sender, e) =>
+            //{
+            //    _callController.AddCall(sender as CallInfo);
+            //};
+
+            //port.CurentCallRemove += (sender, e) =>
+            //{
+            //    _callController.RemoveCall(sender as CallInfo);
+            //};
+
+            //port.CurrentCallGet += (sender, e) =>
+            //{
+            //    _callController.GetCallInfo(sender as Connection);
+            //};
+
+            //port.CurrentCallSave += (sender, e) =>
+            //{
+            //    OnCall(this, sender as CallInfo);
+            //};
             _portController.AddPort(port);
         }
 

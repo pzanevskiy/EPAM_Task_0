@@ -25,10 +25,10 @@ namespace Task3.Models.Controllers
         {
             return _ports.Where(x => x.State == PortState.Free).FirstOrDefault();
         }
-
-        public void CreatePort(int id)
+        
+        public void CreatePort()
         {
-            AddPort(new Port(id));
+            AddPort(new Port());
         }
     }
 }
