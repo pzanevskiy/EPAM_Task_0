@@ -20,11 +20,11 @@ namespace Task3
             Terminal t1 = new Terminal(p1);
             Terminal t2 = new Terminal(p2);
             Terminal t3 = new Terminal(p3);
-            station.AddTerminal(t1);
-            station.AddTerminal(t2);
-            station.AddTerminal(t3);
+            //station.AddTerminal(t1);
+            //station.AddTerminal(t2);
+            //station.AddTerminal(t3);
             t1.ConnectToPort(port);
-            t1.ConnectToPort(station.GetFreePort());
+            //t1.ConnectToPort(station.GetFreePort());
             t2.ConnectToPort(station.GetFreePort());
             t3.ConnectToPort(station.GetFreePort());
 
@@ -41,7 +41,7 @@ namespace Task3
             t1.RejectCall();
             Console.WriteLine();
 
-            foreach(var item in station.GetTerminals())
+            foreach(var item in new List<Terminal>() { t1,t2,t3})
             {
                 Console.WriteLine($"{item.Number} history");
                 var callsGroups = system.Calls.Where(x => x.Terminal.Equals(item)).GroupBy(x => x.CallState);

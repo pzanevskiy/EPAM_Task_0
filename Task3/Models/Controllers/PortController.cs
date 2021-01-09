@@ -26,6 +26,11 @@ namespace Task3.Models.Controllers
             return _ports.Where(x => x.State == PortState.Free).FirstOrDefault();
         }
         
+        public Port GetPortByPhoneNumber(PhoneNumber phoneNumber)
+        {
+            return _ports.FirstOrDefault(x => x.Terminal.Number.Equals(phoneNumber));
+        }
+
         public void CreatePort()
         {
             AddPort(new Port());
