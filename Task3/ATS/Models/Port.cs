@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using Task3.ATS.Models.Interfaces;
-using Task3.Models.Enums;
+using Task3.Enums;
 
-namespace Task3.Models
+namespace Task3.ATS.Models
 {
     public class Port : IPort
     {      
@@ -130,14 +130,12 @@ namespace Task3.Models
             var caller = Station.GetPortByPhoneNumber((sender as Terminal).Connection.From).Terminal;
             var info = Station.GetCallInfo(caller.Connection);
             info.Duration = DateTime.Now - info.DateTimeStart;
-            info.Terminal = caller;
             info.CallState = CallState.Outgoing;
-            Station.OnCall(this, info);
+            Station.OnCall(caller, info);
             var answerer = Station.GetPortByPhoneNumber(caller.Connection.To).Terminal;
             CallInfo info1 = info.Copy();
-            info1.Terminal = answerer;
             info1.CallState = CallState.Incoming;
-            Station.OnCall(this, info1);
+            Station.OnCall(answerer, info1);
             Station.RemoveCall(info);
             caller.Port.ChangeState(PortState.ConnectedTerminal);
             answerer.Port.ChangeState(PortState.ConnectedTerminal);
@@ -157,24 +155,21 @@ namespace Task3.Models
                     if (caller.Equals(sender))
                     {
                         info.CallState = CallState.NoAnswer;
-                        info.Terminal = caller;
-                        Station.OnCall(this, info);
+                        Station.OnCall(caller, info);
                         CallInfo info1 = info.Copy();
                         info1.CallState = CallState.Missed;
-                        info1.Terminal = answerer;
-                        Station.OnCall(this, info1);
+                        Station.OnCall(answerer, info1);
                     }
                     else
                     {
                         info.CallState = CallState.Rejected;
-                        info.Terminal = answerer;
-                        Station.OnCall(this, info);
+                        Station.OnCall(answerer, info);
                         CallInfo info1 = info.Copy();
                         info1.CallState = CallState.NoAnswer;
-                        info1.Terminal = caller;
-                        Station.OnCall(this, info1);
+                        Station.OnCall(caller, info1);
                     }
-
+                    caller.ClearConnection();
+                    answerer.ClearConnection();
                     Station.RemoveCall(info);
                     caller.Port.ChangeState(PortState.ConnectedTerminal);
                     answerer.Port.ChangeState(PortState.ConnectedTerminal);
@@ -182,12 +177,11 @@ namespace Task3.Models
                 else
                 {
                     info.CallState = CallState.NoAnswer;
-                    info.Terminal = caller;
-                    Station.OnCall(this, info);
+                    Station.OnCall(caller, info);
                     CallInfo info1 = info.Copy();
                     info1.CallState = CallState.Missed;
-                    info1.Terminal = answerer;
-                    Station.OnCall(this, info1);
+                    Station.OnCall(answerer, info1);
+                    caller.ClearConnection();
                     caller.Port.ChangeState(PortState.ConnectedTerminal);
                 }
             }

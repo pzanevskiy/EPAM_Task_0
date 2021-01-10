@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Task3.ATS.Models.Interfaces;
 
-namespace Task3.Models
+namespace Task3.ATS.Models
 {
     public class PhoneNumber : IPhoneNumber
     {

@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Task3.ATS.Models;
 using Task3.ATS.Models.Interfaces;
-using Task3.Models;
-using Task3.Models.BillingSystem;
+using Task3.BillingSystems.Models;
+using Task3.BillingSystems.Models.Interfaces;
+using Task3.BillingSystems.Service;
+using Task3.BillingSystems.Service.Interfaces;
 
 namespace Task3
 {
@@ -15,46 +18,63 @@ namespace Task3
             IPort port = new Port();
             Station station = new Station(new List<IPort>() { new Port(), new Port() });
             station.AddPort(port);
-            BillingSystem system = new BillingSystem(station);
+
             IPhoneNumber p1 = new PhoneNumber("11111111");
             IPhoneNumber p2 = new PhoneNumber("22222222");
             IPhoneNumber p3 = new PhoneNumber("33333333");
-            ITerminal t1 = new Terminal(p1);
-            ITerminal t2 = new Terminal(p2);
-            ITerminal t3 = new Terminal(p3);
-            //station.AddTerminal(t1);
-            //station.AddTerminal(t2);
-            //station.AddTerminal(t3);
-            t1.ConnectToPort(port);
-            //t1.ConnectToPort(station.GetFreePort());
-            t2.ConnectToPort(station.GetFreePort());
-            t3.ConnectToPort(station.GetFreePort());
 
-            t1.Call(p2);
-            t2.AcceptCall();
+            BillingSystem system = new BillingSystem(station, new List<IPhoneNumber>() { p1, p2, p3 });
+
+            ITerminal t1 = new Terminal();
+            ITerminal t2 = new Terminal();
+            ITerminal t3 = new Terminal();
+
+            IUser user1 = new User("Ivan", t1, 100);
+            IUser user2 = new User("Petya", t2, 100);
+            IUser user3 = new User("Dima", t3, 100);
+
+            system.RegisterUser(user1);
+            system.RegisterUser(user2);
+            system.RegisterUser(user3);
+            IUserService userService = new UserService();
+            userService.ConnectToPort(user1,port);
+            userService.ConnectToPort(user2, station.GetFreePort());
+            userService.ConnectToPort(user3, station.GetFreePort());
+
+            userService.Call(user1, p2);
+            userService.Answer(user2);
             Thread.Sleep(2000);
-            t2.EndCall();
-            Console.WriteLine();
-            t2.Call(p1);
-            t3.Call(p1);
-            t2.RejectCall();
-            Console.WriteLine();
-            t2.Call(p1);
-            t1.RejectCall();
+            userService.EndCall(user2);
             Console.WriteLine();
 
-            foreach(var item in new List<ITerminal>() { t1,t2,t3})
+            userService.Call(user1, p2);
+            userService.Answer(user2);
+            Thread.Sleep(3000);
+            userService.EndCall(user2);
+            Console.WriteLine();
+
+            userService.Call(user1, p2);
+            userService.Answer(user2);
+            Thread.Sleep(1000);
+            userService.EndCall(user2);
+            Console.WriteLine();
+
+
+            userService.Call(user2, p1);
+            userService.Call(user3, p1);
+            userService.Reject(user2);
+            Console.WriteLine();
+
+            userService.Call(user2, p1);
+            userService.Answer(user1);
+            Thread.Sleep(1000);
+            userService.EndCall(user1);
+            Console.WriteLine();
+
+            foreach (var item in system.Users)
             {
-                Console.WriteLine($"{item.Number} history");
-                var callsGroups = system.Calls.Where(x => x.Terminal.Equals(item)).GroupBy(x => x.CallState);
-                foreach (var item1 in callsGroups)
-                {
-                    Console.WriteLine($"{item1.Key}\n");
-                    foreach (var x in item1)
-                    {
-                        Console.WriteLine($"\t{x}");
-                    }
-                }
+                Console.WriteLine($"{item.Name} history");
+                system.GetUserInfo(item);
                 Console.WriteLine();
             }
             Console.WriteLine("Press any key to continue...\n\n\n");

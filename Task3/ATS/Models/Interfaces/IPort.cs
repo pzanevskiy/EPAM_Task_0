@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Task3.Models.Enums;
+using Task3.Enums;
 
 namespace Task3.ATS.Models.Interfaces
 {

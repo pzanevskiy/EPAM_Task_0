@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Task3.ATS.Models.Interfaces;
 
-namespace Task3.Models
+namespace Task3.ATS.Models
 {
     public class Terminal : ITerminal
     {
@@ -34,12 +34,11 @@ namespace Task3.Models
 
         public Terminal()
         {
-
+            RegisterEventHandlerForTerminal();
         }
 
-        public Terminal(IPhoneNumber phoneNumber)
+        public Terminal(IPhoneNumber phoneNumber):this()
         {
-            RegisterEventHandlerForTerminal();
             Number = phoneNumber;
         }
 

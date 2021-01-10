@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Task3.ATS.Models;
 using Task3.ATS.Models.Interfaces;
-using Task3.Models.Enums;
+using Task3.Enums;
 
-namespace Task3.Models.Controllers
+namespace Task3.ATS.Controllers
 {
     public class PortController
     {

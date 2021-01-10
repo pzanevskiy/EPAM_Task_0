@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Task3.ATS.Models;
 
-namespace Task3.Models.Controllers
+namespace Task3.ATS.Controllers
 {
     public class TerminalController
     {

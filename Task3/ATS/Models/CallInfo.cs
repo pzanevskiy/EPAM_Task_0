@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using Task3.ATS.Models.Interfaces;
-using Task3.Models.Enums;
+using Task3.BillingSystems.Models.Interfaces;
+using Task3.Enums;
 
-namespace Task3.Models
+namespace Task3.ATS.Models
 {
     public class CallInfo
     {
-        //delete terminal
-        public ITerminal Terminal { get; set; }
+        public IUser User { get; set; }
         public IPhoneNumber From { get; set; }
         public IPhoneNumber To { get; set; }
         public DateTime DateTimeStart { get; set; }
         public TimeSpan Duration { get; set; }
+        public double Cost { get; set; }
         public CallState CallState { get; set; }
 
         public CallInfo Copy()
@@ -29,11 +31,12 @@ namespace Task3.Models
 
         public override string ToString()
         {
-            return $"From {From} " +
-                $"to {To}\t" +
-                $"Started at: {string.Format("{0:F}", DateTimeStart)}\t" +
-                $"Duration: {string.Format("{0:hh\\:mm\\:ss}", Duration)}\t" +
-                $"State: {CallState}";
+            return $"From: {From}\t" +
+                $"To: {To}\n" +
+                $"Started at: {DateTimeStart:F}\t" +
+                $"Duration: {Duration:hh\\:mm\\:ss}\n" +
+                $"State: {CallState}\t" +
+                $"Cost: {Cost:F2}";
         }
     }
 }

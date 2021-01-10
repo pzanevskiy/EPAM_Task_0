@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Task3.Models;
+using Task3.ATS.Models;
 
 namespace Task3.ATS.Models.Interfaces
 {
@@ -32,6 +32,6 @@ namespace Task3.ATS.Models.Interfaces
         public void ConnectToPort(IPort port);
         public void DisconnectFromPort();
         public void RememberConnection(IPhoneNumber from, IPhoneNumber to);
-
+        public void ClearConnection();
     }
 }

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Task3.ATS.Controllers;
 using Task3.ATS.Models.Interfaces;
-using Task3.Models.Controllers;
-using Task3.Models.Enums;
+using Task3.Enums;
 
-namespace Task3.Models
+namespace Task3.ATS.Models
 {
     public class Station : IStation
     {

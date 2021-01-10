@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Task3.Models.Enums
+namespace Task3.Enums
 {
     public enum PortState
     {
