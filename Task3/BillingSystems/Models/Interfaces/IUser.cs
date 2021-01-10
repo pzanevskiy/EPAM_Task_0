@@ -11,6 +11,6 @@ namespace Task3.BillingSystems.Models.Interfaces
         public string Name { get; set; }
         public ITerminal Terminal { get; set; }
         public double Money { get; set; }
-        public double Tariff { get; set; }
+        public Tariff Tariff { get; set; }
     }
 }

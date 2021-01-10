@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Task3.ATS.Models;
 using Task3.ATS.Models.Interfaces;
 using Task3.BillingSystems.Models.Interfaces;
@@ -33,7 +34,7 @@ namespace Task3.BillingSystems.Models
                 callInfo.User = GetUserByTerminal(sender as Terminal);
                 if (callInfo.CallState == Enums.CallState.Outgoing)
                 {
-                    callInfo.Cost = callInfo.User.Tariff * callInfo.Duration.Seconds;
+                    callInfo.Cost = callInfo.User.Tariff.CostPerSecond * callInfo.Duration.Seconds;
                     callInfo.User.Money -= callInfo.Cost;
                 }
                 else
@@ -54,18 +55,18 @@ namespace Task3.BillingSystems.Models
             var freeNumber = PhoneNumbers.FirstOrDefault(x => x.Value.Equals(true)).Key;
             user.Terminal.Number = freeNumber;
             PhoneNumbers[freeNumber] = false;
-            user.Tariff = Tariff.tariff;
+            user.Tariff = new Tariff();
             Users.Add(user);
         }
 
         public void GetUserInfo(IUser user)
         {
             var userCalls = Calls.Select(x => x).Where(x => x.User.Equals(user));
-            var userCallGroups = userCalls.GroupBy(x => x.CallState);
+            var userCallGroups = userCalls.Select(x => x).Where(x => x.Cost >= 0.30).GroupBy(x => x.CallState);
             foreach(var item in userCallGroups)
             {
                 Console.WriteLine($"{item.Key}\n");
-                foreach (var x in item.OrderBy(x=>x.Duration))
+                foreach (var x in item)
                 {
                     Console.WriteLine($"{x}");
                 }

@@ -33,6 +33,11 @@ namespace Task3.ATS.Models
         public IStation Station { get; set; }
 
         public event EventHandler<PortState> StateChanged;
+        public event EventHandler<IPhoneNumber> OutgoingCall;
+        public event EventHandler<IPhoneNumber> IncomingCall;
+        public event EventHandler Accept;
+        public event EventHandler Reject;
+        public event EventHandler End;
 
         public Port()
         {
@@ -56,135 +61,31 @@ namespace Task3.ATS.Models
 
         private void RegisterEventHandlersForTerminal(ITerminal terminal)
         {
-            terminal.OutgoingCall += OnOutgoingCall;
-            terminal.IncomingCall += OnIncomingCall;
-            terminal.Accept += OnAccept;
-            terminal.End += OnEnd;
-            terminal.Reject += OnReject;
+            terminal.OutgoingCall += (sender, phone) =>
+            {
+                OutgoingCall?.Invoke(sender, phone);
+            };        
+            terminal.IncomingCall += (sender, phone) =>
+            {
+                IncomingCall?.Invoke(sender, phone);
+            };
+            terminal.Accept += (sender, e) =>
+            {
+                Accept.Invoke(sender, e);
+            };
+            terminal.End += (sender, e) =>
+            {
+                End.Invoke(sender, e);
+            };
+            terminal.Reject += (sender, e )=>
+            {
+                Reject.Invoke(sender, e);
+            };
         }
 
         public void ChangeState(PortState state)
         {
             State = state;
-        }
-
-        private void OnOutgoingCall(object sender, IPhoneNumber phone)
-        {
-            var answerer = Station.GetPortByPhoneNumber(phone).Terminal;
-            var caller = sender as Terminal;
-
-            if (answerer != null && caller != null)
-            {
-                if (answerer.Port.State != PortState.Busy)
-                {
-                    caller.Port.ChangeState(PortState.Busy);
-                    caller.RememberConnection(caller.Number, phone);
-                    CallInfo info = new CallInfo
-                    {
-                        From = caller.Number,
-                        To = phone,
-                        DateTimeStart = DateTime.Now,
-                    };
-                    Station.AddCall(info);
-                    answerer.GetCall(caller.Number);
-                }
-                else
-                {
-                    caller.Port.ChangeState(PortState.Busy);
-                    caller.RememberConnection(caller.Number, phone);
-                    CallInfo info = new CallInfo
-                    {
-                        From = caller.Number,
-                        To = phone,
-                        DateTimeStart = DateTime.Now,
-                    };
-                    Station.AddCall(info);
-                    Console.WriteLine($"Terminal is busy");
-                    caller.RejectCall();
-                }
-
-            }
-            else
-            {
-                Console.WriteLine($"Phone not binded to terminal");
-                caller.RejectCall();
-            }
-        }
-
-        private void OnIncomingCall(object sender, IPhoneNumber phone)
-        {
-            var answerer = sender as Terminal;
-            answerer.Port.ChangeState(PortState.Busy);
-            answerer.RememberConnection(phone, answerer.Number);
-        }
-
-        private void OnAccept(object sender, EventArgs e)
-        {
-            var caller = Station.GetPortByPhoneNumber((sender as Terminal).Connection.From).Terminal;
-            var info = Station.GetCallInfo(caller.Connection);
-            info.DateTimeStart = DateTime.Now;
-        }
-
-        private void OnEnd(object sender, EventArgs e)
-        {
-            var caller = Station.GetPortByPhoneNumber((sender as Terminal).Connection.From).Terminal;
-            var info = Station.GetCallInfo(caller.Connection);
-            info.Duration = DateTime.Now - info.DateTimeStart;
-            info.CallState = CallState.Outgoing;
-            Station.OnCall(caller, info);
-            var answerer = Station.GetPortByPhoneNumber(caller.Connection.To).Terminal;
-            CallInfo info1 = info.Copy();
-            info1.CallState = CallState.Incoming;
-            Station.OnCall(answerer, info1);
-            Station.RemoveCall(info);
-            caller.Port.ChangeState(PortState.ConnectedTerminal);
-            answerer.Port.ChangeState(PortState.ConnectedTerminal);
-        }
-
-        private void OnReject(object sender, EventArgs e)
-        {
-            if ((sender as Terminal).Connection != null)
-            {
-                var caller = Station.GetPortByPhoneNumber((sender as Terminal).Connection.From).Terminal;
-                var info = Station.GetCallInfo(caller.Connection);
-                var answerer = Station.GetPortByPhoneNumber(caller.Connection.To).Terminal;
-                info.Duration = TimeSpan.Zero;
-
-                if (caller.Connection.Equals(answerer.Connection))
-                {
-                    if (caller.Equals(sender))
-                    {
-                        info.CallState = CallState.NoAnswer;
-                        Station.OnCall(caller, info);
-                        CallInfo info1 = info.Copy();
-                        info1.CallState = CallState.Missed;
-                        Station.OnCall(answerer, info1);
-                    }
-                    else
-                    {
-                        info.CallState = CallState.Rejected;
-                        Station.OnCall(answerer, info);
-                        CallInfo info1 = info.Copy();
-                        info1.CallState = CallState.NoAnswer;
-                        Station.OnCall(caller, info1);
-                    }
-                    caller.ClearConnection();
-                    answerer.ClearConnection();
-                    Station.RemoveCall(info);
-                    caller.Port.ChangeState(PortState.ConnectedTerminal);
-                    answerer.Port.ChangeState(PortState.ConnectedTerminal);
-                }
-                else
-                {
-                    info.CallState = CallState.NoAnswer;
-                    Station.OnCall(caller, info);
-                    CallInfo info1 = info.Copy();
-                    info1.CallState = CallState.Missed;
-                    Station.OnCall(answerer, info1);
-                    caller.ClearConnection();
-                    caller.Port.ChangeState(PortState.ConnectedTerminal);
-                }
-            }
         }
     }
 }

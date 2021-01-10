@@ -6,6 +6,6 @@ namespace Task3.BillingSystems.Models
 {
     public class Tariff
     {
-        public readonly static double tariff = 0.15;
+        public double CostPerSecond => 0.15;
     }
 }

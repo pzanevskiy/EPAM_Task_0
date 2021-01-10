@@ -11,7 +11,6 @@ namespace Task3.ATS.Models
     public class Station : IStation
     {
         private protected PortController _portController;
-        //private protected TerminalController _terminalController;
         private protected CallController _callController;
 
         public event EventHandler<CallInfo> Call;
@@ -19,7 +18,6 @@ namespace Task3.ATS.Models
         public Station()
         {
             _portController = new PortController();
-            //_terminalController = new TerminalController();
             _callController = new CallController();
         }
 
@@ -43,48 +41,19 @@ namespace Task3.ATS.Models
 
         public void AddPort(IPort port)
         {
-            //port.CurrentCallAdd += (sender, e) =>
-            //{
-            //    _callController.AddCall(sender as CallInfo);
-            //};
-
-            //port.CurentCallRemove += (sender, e) =>
-            //{
-            //    _callController.RemoveCall(sender as CallInfo);
-            //};
-
-            //port.CurrentCallGet += (sender, e) =>
-            //{
-            //    _callController.GetCallInfo(sender as Connection);
-            //};
-
-            //port.CurrentCallSave += (sender, e) =>
-            //{
-            //    OnCall(this, sender as CallInfo);
-            //};
             port.Station = this;
+            RegisterEventHandlersForTerminal(port);
             _portController.AddPort(port);
         }
 
-        //public void AddTerminal(Terminal terminal)
-        //{
-        //    RegisterEventHandlersForTerminal(terminal);
-        //    _terminalController.AddTerminal(terminal);
-        //}
-
-        //public ICollection<Terminal> GetTerminals()
-        //{
-        //    return _terminalController.Terminals;
-        //}
-        
-        //private void RegisterEventHandlersForTerminal(Terminal terminal)
-        //{
-        //    terminal.OutgoingCall += OnOutgoingCall;
-        //    terminal.IncomingCall += OnIncomingCall;
-        //    terminal.Accept += OnAccept;
-        //    terminal.End += OnEnd;
-        //    terminal.Reject += OnReject;
-        //}
+        private void RegisterEventHandlersForTerminal(IPort port)
+        {
+            port.OutgoingCall += OnOutgoingCall;
+            port.IncomingCall += OnIncomingCall;
+            port.Accept += OnAccept;
+            port.End += OnEnd;
+            port.Reject += OnReject;
+        }
 
         public IPort GetPortByPhoneNumber(IPhoneNumber phone)
         {
@@ -105,117 +74,124 @@ namespace Task3.ATS.Models
         {
             return _callController.GetCallInfo(connection);
         }
-        
 
-        //private void OnOutgoingCall(object sender,PhoneNumber phone)
-        //{
-        //    var answerer = _terminalController.FindTerminalByNumber(phone);
-        //    var caller = sender as Terminal;
+        private void OnOutgoingCall(object sender, IPhoneNumber phone)
+        {
+            var answerer = GetPortByPhoneNumber(phone).Terminal;
+            var caller = sender as Terminal;
 
-        //    if (answerer != null && caller != null)
-        //    {
-        //        if (answerer.Port.State != PortState.Busy)
-        //        {
-        //            caller.Port.ChangeState(PortState.Busy);
-        //            caller.RememberConnection(caller.Number, phone);
-        //            CallInfo info = new CallInfo
-        //            {
-        //                From = caller.Number,
-        //                To = phone,
-        //                DateTimeStart = DateTime.Now,
-        //            };
-        //            _callController.AddCall(info);
-        //            answerer.GetCall(caller.Number);
-        //        }
-        //        else
-        //        {
-        //            caller.Port.ChangeState(PortState.Busy);
-        //            caller.RememberConnection(caller.Number, phone);
-        //            CallInfo info = new CallInfo
-        //            {
-        //                From = caller.Number,
-        //                To = phone,
-        //                DateTimeStart = DateTime.Now,
-        //            };
-        //            _callController.AddCall(info);
-        //            Console.WriteLine($"Terminal is busy");
-        //            caller.RejectCall();
-        //        }
+            if (answerer != null && caller != null)
+            {
+                if (answerer.Port.State != PortState.Busy)
+                {
+                    caller.Port.ChangeState(PortState.Busy);
+                    caller.RememberConnection(caller.Number, phone);
+                    CallInfo info = new CallInfo
+                    {
+                        From = caller.Number,
+                        To = phone,
+                        DateTimeStart = DateTime.Now,
+                    };
+                    AddCall(info);
+                    answerer.GetCall(caller.Number);
+                }
+                else
+                {
+                    caller.Port.ChangeState(PortState.Busy);
+                    caller.RememberConnection(caller.Number, phone);
+                    CallInfo info = new CallInfo
+                    {
+                        From = caller.Number,
+                        To = phone,
+                        DateTimeStart = DateTime.Now,
+                    };
+                    AddCall(info);
+                    Console.WriteLine($"Terminal is busy");
+                    caller.RejectCall();
+                }
 
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine($"Phone not binded to terminal");
-        //        caller.RejectCall();
-        //    }
-        //}
+            }
+            else
+            {
+                Console.WriteLine($"Phone not binded to terminal");
+                caller.RejectCall();
+            }
+        }
 
-        //private void OnIncomingCall(object sender,PhoneNumber phone)
-        //{
-        //    var answerer = sender as Terminal;
-        //    answerer.Port.ChangeState(PortState.Busy);
-        //    answerer.RememberConnection(phone, answerer.Number);
-        //}
+        private void OnIncomingCall(object sender, IPhoneNumber phone)
+        {
+            var answerer = sender as Terminal;
+            answerer.Port.ChangeState(PortState.Busy);
+            answerer.RememberConnection(phone, answerer.Number);
+        }
 
-        //private void OnAccept(object sender, EventArgs e)
-        //{
-        //    var caller = _terminalController.FindTerminalByNumber((sender as Terminal).Connection.From);
-        //    var info = _callController.GetCallInfo(caller.Connection);
-        //    info.DateTimeStart = DateTime.Now;
-        //}
+        private void OnAccept(object sender, EventArgs e)
+        {
+            var caller = GetPortByPhoneNumber((sender as Terminal).Connection.From).Terminal;
+            var info = GetCallInfo(caller.Connection);
+            info.DateTimeStart = DateTime.Now;
+        }
 
-        //private void OnEnd(object sender, EventArgs e)
-        //{
-        //    var caller = _terminalController.FindTerminalByNumber((sender as Terminal).Connection.From);
-        //    var info = _callController.GetCallInfo(caller.Connection);
-        //    info.Duration = DateTime.Now - info.DateTimeStart;
-        //    info.Terminal = caller;
-        //    info.CallState = CallState.Outgoing;
-        //    OnCall(this, info);
-        //    var answerer = _terminalController.FindTerminalByNumber(caller.Connection.To);
-        //    CallInfo info1 = info.Copy();
-        //    info1.Terminal = answerer;
-        //    info1.CallState = CallState.Incoming;
-        //    OnCall(this, info1);
-        //    _callController.RemoveCall(info);
-        //    caller.Port.ChangeState(PortState.ConnectedTerminal);
-        //    answerer.Port.ChangeState(PortState.ConnectedTerminal);
-        //}
+        private void OnEnd(object sender, EventArgs e)
+        {
+            var caller = GetPortByPhoneNumber((sender as Terminal).Connection.From).Terminal;
+            var info = GetCallInfo(caller.Connection);
+            info.Duration = DateTime.Now - info.DateTimeStart;
+            info.CallState = CallState.Outgoing;
+            OnCall(caller, info);
+            var answerer = GetPortByPhoneNumber(caller.Connection.To).Terminal;
+            CallInfo info1 = info.Copy();
+            info1.CallState = CallState.Incoming;
+            OnCall(answerer, info1);
+            RemoveCall(info);
+            caller.Port.ChangeState(PortState.ConnectedTerminal);
+            answerer.Port.ChangeState(PortState.ConnectedTerminal);
+        }
 
-        //private void OnReject(object sender, EventArgs e)
-        //{
-        //    if ((sender as Terminal).Connection != null)
-        //    {
-        //        var caller = _terminalController.FindTerminalByNumber((sender as Terminal).Connection.From);
-        //        var info = _callController.GetCallInfo(caller.Connection);
-        //        var answerer = _terminalController.FindTerminalByNumber(caller.Connection.To);
-        //        info.Duration = TimeSpan.Zero;
+        private void OnReject(object sender, EventArgs e)
+        {
+            if ((sender as Terminal).Connection != null)
+            {
+                var caller = GetPortByPhoneNumber((sender as Terminal).Connection.From).Terminal;
+                var info = GetCallInfo(caller.Connection);
+                var answerer = GetPortByPhoneNumber(caller.Connection.To).Terminal;
+                info.Duration = TimeSpan.Zero;
 
-        //        if (caller.Equals(sender))
-        //        {
-        //            info.CallState = CallState.NoAnswer;
-        //            info.Terminal = caller;
-        //            OnCall(this, info);
-        //            CallInfo info1 = info.Copy();
-        //            info1.CallState = CallState.Missed;
-        //            info1.Terminal = answerer;
-        //            OnCall(this, info1);
-        //        }
-        //        else
-        //        {
-        //            info.CallState = CallState.Rejected;
-        //            info.Terminal = answerer;
-        //            OnCall(this, info);
-        //            CallInfo info1 = info.Copy();
-        //            info1.CallState = CallState.NoAnswer;
-        //            info1.Terminal = caller;
-        //            OnCall(this, info1);
-        //        }
-
-        //        _callController.RemoveCall(info);
-        //        caller.Port.ChangeState(PortState.ConnectedTerminal);
-        //        answerer.Port.ChangeState(PortState.ConnectedTerminal);
-        //    }
-        //}
+                if (caller.Connection.Equals(answerer.Connection))
+                {
+                    if (caller.Equals(sender))
+                    {
+                        info.CallState = CallState.NoAnswer;
+                        OnCall(caller, info);
+                        CallInfo info1 = info.Copy();
+                        info1.CallState = CallState.Missed;
+                        OnCall(answerer, info1);
+                    }
+                    else
+                    {
+                        info.CallState = CallState.Rejected;
+                        OnCall(answerer, info);
+                        CallInfo info1 = info.Copy();
+                        info1.CallState = CallState.NoAnswer;
+                        OnCall(caller, info1);
+                    }
+                    caller.ClearConnection();
+                    answerer.ClearConnection();
+                    RemoveCall(info);
+                    caller.Port.ChangeState(PortState.ConnectedTerminal);
+                    answerer.Port.ChangeState(PortState.ConnectedTerminal);
+                }
+                else
+                {
+                    info.CallState = CallState.NoAnswer;
+                    OnCall(caller, info);
+                    CallInfo info1 = info.Copy();
+                    info1.CallState = CallState.Missed;
+                    OnCall(answerer, info1);
+                    caller.ClearConnection();
+                    caller.Port.ChangeState(PortState.ConnectedTerminal);
+                }
+            }
+        }
     }
 }
