@@ -10,7 +10,7 @@ namespace Task3.ATS.Models
         private IPhoneNumber _phoneNumber;
         private IPort _port;
 
-        public Connection Connection { get; set; }
+        public Connection Connection { get; private set; }
 
         public IPhoneNumber Number
         {
@@ -21,7 +21,7 @@ namespace Task3.ATS.Models
         public IPort Port
         {
             get => _port;
-            set => _port = value;
+            private set => _port = value;
         }
 
         public event EventHandler<IPhoneNumber> OutgoingCall;
@@ -47,24 +47,34 @@ namespace Task3.ATS.Models
             OutgoingCall += (sender, phone) =>
             {
                 var caller = sender as Terminal;
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"{caller.Number} calls to {phone.Number}");
+                Console.ForegroundColor = ConsoleColor.White;
             };
             IncomingCall += (sender, phone) =>
             {
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 var answerer = sender as Terminal;
                 Console.WriteLine($"{answerer.Number} is calling {phone.Number}");
+                Console.ForegroundColor = ConsoleColor.White;
             };
             Accept += (sender, e) =>
             {
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"Call is started by {(sender as Terminal).Number}");
+                Console.ForegroundColor = ConsoleColor.White;
             };
             Reject += (sender, e) =>
             {                
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Call is rejected by {(sender as Terminal).Number}");
+                Console.ForegroundColor = ConsoleColor.White;
             };
             End += (sender, e) =>
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Call is ended by {(sender as Terminal).Number}");
+                Console.ForegroundColor = ConsoleColor.White;
             };
             ConnectingToPort += (sender, e) =>
             {

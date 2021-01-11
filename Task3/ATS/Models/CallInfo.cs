@@ -18,17 +18,6 @@ namespace Task3.ATS.Models
         public double Cost { get; set; }
         public CallState CallState { get; set; }
 
-        public CallInfo Copy()
-        {
-            return new CallInfo
-            {
-                From=From,
-                To=To,
-                DateTimeStart=DateTimeStart,
-                Duration=Duration
-            };
-        }
-
         public override string ToString()
         {
             return $"From: {From}\t" +

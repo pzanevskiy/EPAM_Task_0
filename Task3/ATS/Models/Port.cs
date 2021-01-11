@@ -15,7 +15,7 @@ namespace Task3.ATS.Models
         public PortState State
         {
             get => _portState;
-            set
+            private set
             {               
                 _portState = value;
                 OnStateChanged(this, _portState);
@@ -29,8 +29,7 @@ namespace Task3.ATS.Models
                 _terminal = value;
                 RegisterEventHandlersForTerminal(_terminal);
             }
-        }
-        public IStation Station { get; set; }
+        }     
 
         public event EventHandler<PortState> StateChanged;
         public event EventHandler<IPhoneNumber> OutgoingCall;
@@ -54,7 +53,7 @@ namespace Task3.ATS.Models
         protected virtual void RegisterEventHandlerForPort()
         {
             StateChanged += (sender, eventArgs) =>
-            {
+            {               
                 Console.WriteLine($"Port #{Id} state changed to {eventArgs}");
             };
         }

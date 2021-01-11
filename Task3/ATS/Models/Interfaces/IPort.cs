@@ -7,10 +7,9 @@ namespace Task3.ATS.Models.Interfaces
 {
     public interface IPort
     {
-        public Guid Id { get; set; }
-        public PortState State { get; set; }        
-        public ITerminal Terminal { get; set; }
-        public IStation Station { get; set; }
+        public Guid Id { get; }
+        public PortState State { get; }        
+        public ITerminal Terminal { get; set; }      
 
         public event EventHandler<PortState> StateChanged;
         public event EventHandler<IPhoneNumber> OutgoingCall;

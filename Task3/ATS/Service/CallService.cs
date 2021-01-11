@@ -6,11 +6,13 @@ using Task3.ATS.Models;
 
 namespace Task3.ATS.Controllers
 {
-    public class CallController
+    public class CallService
     {
         private ICollection<CallInfo> _calls;
 
-        public CallController()
+        public event EventHandler<CallInfo> Call;
+
+        public CallService()
         {
             _calls = new List<CallInfo>();
         }
@@ -24,9 +26,27 @@ namespace Task3.ATS.Controllers
         {
             _calls.Remove(call);
         }
+
         public CallInfo GetCallInfo(Connection connection)
         {
             return _calls.FirstOrDefault(x => x.From.Equals(connection.From) && x.To.Equals(connection.To));
         }
+
+        public CallInfo Copy(CallInfo callInfo)
+        {
+            return new CallInfo
+            {
+                From = callInfo.From,
+                To = callInfo.To,
+                DateTimeStart = callInfo.DateTimeStart,
+                Duration = callInfo.Duration
+            };
+        }
+
+        public void OnCall(object sender, CallInfo call)
+        {
+            Call?.Invoke(sender, call);
+        }
+
     }
 }

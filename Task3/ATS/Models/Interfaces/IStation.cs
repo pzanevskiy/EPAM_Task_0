@@ -7,9 +7,6 @@ namespace Task3.ATS.Models.Interfaces
 {
     public interface IStation
     {
-        public event EventHandler<CallInfo> Call;
-
-        void OnCall(object sender, CallInfo call);
         public IPort GetFreePort();
 
         public void AddPort(IPort port);

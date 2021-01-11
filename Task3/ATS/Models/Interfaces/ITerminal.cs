@@ -7,11 +7,11 @@ namespace Task3.ATS.Models.Interfaces
 {
     public interface ITerminal
     {
-        public Connection Connection { get; set; }
+        public Connection Connection { get; }
 
         public IPhoneNumber Number { get; set; }       
 
-        public IPort Port { get; set; }
+        public IPort Port { get; }
 
         public event EventHandler<IPhoneNumber> OutgoingCall;
         public event EventHandler<IPhoneNumber> IncomingCall;

@@ -6,16 +6,17 @@ using System.Threading;
 using Task3.ATS.Models;
 using Task3.ATS.Models.Interfaces;
 using Task3.BillingSystems.Models.Interfaces;
+using Task3.Enums;
 
 namespace Task3.BillingSystems.Models
 {
     public class BillingSystem : IBillingSystem
     {
-        public Dictionary<IPhoneNumber,bool> PhoneNumbers { get; private set; }
+        private Dictionary<IPhoneNumber,bool> PhoneNumbers { get; set; }
         public List<CallInfo> Calls { get; set; }
         public List<IUser> Users { get; set; }
 
-        public BillingSystem(Station s,List<IPhoneNumber> phones)
+        public BillingSystem(Station s, List<IPhoneNumber> phones)
         {
             Calls = new List<CallInfo>();
             Users = new List<IUser>();
@@ -27,12 +28,14 @@ namespace Task3.BillingSystems.Models
             RegisterHandlerForStation(s);
         }
 
+
+
         private void RegisterHandlerForStation(Station station)
         {
-            station.Call += (sender, callInfo) =>
+            station.CallService.Call += (sender, callInfo) =>
             {
                 callInfo.User = GetUserByTerminal(sender as Terminal);
-                if (callInfo.CallState == Enums.CallState.Outgoing)
+                if (callInfo.CallState == CallState.Outgoing)
                 {
                     callInfo.Cost = callInfo.User.Tariff.CostPerSecond * callInfo.Duration.Seconds;
                     callInfo.User.Money -= callInfo.Cost;
@@ -61,14 +64,19 @@ namespace Task3.BillingSystems.Models
 
         public void GetUserInfo(IUser user)
         {
-            var userCalls = Calls.Select(x => x).Where(x => x.User.Equals(user));
-            var userCallGroups = userCalls.Select(x => x).Where(x => x.Cost >= 0.30).GroupBy(x => x.CallState);
-            foreach(var item in userCallGroups)
+            //Calls.Add(new CallInfo() { User = user, From = user.Terminal.Number, DateTimeStart = DateTime.Now.AddDays(-29) });
+            //Calls.Add(new CallInfo() { User = user, From = user.Terminal.Number, DateTimeStart = DateTime.Now.AddDays(-30) });
+            //Calls.Add(new CallInfo() { User = user, From = user.Terminal.Number, DateTimeStart = DateTime.Now.AddDays(-31) });
+            //Calls.Add(new CallInfo() { User = user, From = user.Terminal.Number, DateTimeStart = DateTime.Now.AddDays(-32) });
+            var userCalls = Calls
+                .Where(x => x.User.Equals(user) && x.DateTimeStart.Date>=DateTime.Now.AddMonths(-1).Date)
+                .GroupBy(x => x.CallState);
+            foreach(var item in userCalls)
             {
                 Console.WriteLine($"{item.Key}\n");
                 foreach (var x in item)
                 {
-                    Console.WriteLine($"{x}");
+                    Console.WriteLine($"{x}\n");
                 }
                 Console.WriteLine();
             }

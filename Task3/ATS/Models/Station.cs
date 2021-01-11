@@ -10,15 +10,16 @@ namespace Task3.ATS.Models
 {
     public class Station : IStation
     {
-        private protected PortController _portController;
-        private protected CallController _callController;
+        private PortService _portService;
+        private CallService _callService;
 
-        public event EventHandler<CallInfo> Call;
+        public CallService CallService => _callService;
+
 
         public Station()
         {
-            _portController = new PortController();
-            _callController = new CallController();
+            _portService = new PortService();
+            _callService = new CallService();
         }
 
         public Station(ICollection<IPort> ports) : this()
@@ -29,24 +30,18 @@ namespace Task3.ATS.Models
             }
         }
        
-        public void OnCall(object sender, CallInfo call)
-        {
-            Call?.Invoke(sender, call);
-        }
-
         public IPort GetFreePort()
         {
-            return _portController.GetFreePort();
+            return _portService.GetFreePort();
         }
 
         public void AddPort(IPort port)
         {
-            port.Station = this;
-            RegisterEventHandlersForTerminal(port);
-            _portController.AddPort(port);
+            RegisterEventHandlersForPort(port);
+            _portService.AddPort(port);
         }
 
-        private void RegisterEventHandlersForTerminal(IPort port)
+        private void RegisterEventHandlersForPort(IPort port)
         {
             port.OutgoingCall += OnOutgoingCall;
             port.IncomingCall += OnIncomingCall;
@@ -57,22 +52,22 @@ namespace Task3.ATS.Models
 
         public IPort GetPortByPhoneNumber(IPhoneNumber phone)
         {
-            return _portController.GetPortByPhoneNumber(phone);
+            return _portService.GetPortByPhoneNumber(phone);
         }
 
         public void AddCall(CallInfo info)
         {
-            _callController.AddCall(info);
+            _callService.AddCall(info);
         }
 
         public void RemoveCall(CallInfo info)
         {
-            _callController.RemoveCall(info);
+            _callService.RemoveCall(info);
         }
 
         public CallInfo GetCallInfo(Connection connection)
         {
-            return _callController.GetCallInfo(connection);
+            return _callService.GetCallInfo(connection);
         }
 
         private void OnOutgoingCall(object sender, IPhoneNumber phone)
@@ -82,34 +77,26 @@ namespace Task3.ATS.Models
 
             if (answerer != null && caller != null)
             {
-                if (answerer.Port.State != PortState.Busy)
+                caller.Port.ChangeState(PortState.Busy);
+                caller.RememberConnection(caller.Number, phone);
+                CallInfo info = new CallInfo
                 {
-                    caller.Port.ChangeState(PortState.Busy);
-                    caller.RememberConnection(caller.Number, phone);
-                    CallInfo info = new CallInfo
-                    {
-                        From = caller.Number,
-                        To = phone,
-                        DateTimeStart = DateTime.Now,
-                    };
-                    AddCall(info);
+                    From = caller.Number,
+                    To = phone,
+                    DateTimeStart = DateTime.Now,
+                    Duration = TimeSpan.Zero
+                };
+                AddCall(info); 
+
+                if (answerer.Port.State != PortState.Busy)
+                {                   
                     answerer.GetCall(caller.Number);
                 }
                 else
-                {
-                    caller.Port.ChangeState(PortState.Busy);
-                    caller.RememberConnection(caller.Number, phone);
-                    CallInfo info = new CallInfo
-                    {
-                        From = caller.Number,
-                        To = phone,
-                        DateTimeStart = DateTime.Now,
-                    };
-                    AddCall(info);
+                {                   
                     Console.WriteLine($"Terminal is busy");
                     caller.RejectCall();
                 }
-
             }
             else
             {
@@ -138,11 +125,11 @@ namespace Task3.ATS.Models
             var info = GetCallInfo(caller.Connection);
             info.Duration = DateTime.Now - info.DateTimeStart;
             info.CallState = CallState.Outgoing;
-            OnCall(caller, info);
+            _callService.OnCall(caller, info);
             var answerer = GetPortByPhoneNumber(caller.Connection.To).Terminal;
-            CallInfo info1 = info.Copy();
+            CallInfo info1 = _callService.Copy(info);
             info1.CallState = CallState.Incoming;
-            OnCall(answerer, info1);
+            _callService.OnCall(answerer, info1);
             RemoveCall(info);
             caller.Port.ChangeState(PortState.ConnectedTerminal);
             answerer.Port.ChangeState(PortState.ConnectedTerminal);
@@ -155,25 +142,24 @@ namespace Task3.ATS.Models
                 var caller = GetPortByPhoneNumber((sender as Terminal).Connection.From).Terminal;
                 var info = GetCallInfo(caller.Connection);
                 var answerer = GetPortByPhoneNumber(caller.Connection.To).Terminal;
-                info.Duration = TimeSpan.Zero;
 
                 if (caller.Connection.Equals(answerer.Connection))
                 {
                     if (caller.Equals(sender))
                     {
                         info.CallState = CallState.NoAnswer;
-                        OnCall(caller, info);
-                        CallInfo info1 = info.Copy();
+                        _callService.OnCall(caller, info);
+                        CallInfo info1 = _callService.Copy(info);
                         info1.CallState = CallState.Missed;
-                        OnCall(answerer, info1);
+                        _callService.OnCall(answerer, info1);
                     }
                     else
                     {
                         info.CallState = CallState.Rejected;
-                        OnCall(answerer, info);
-                        CallInfo info1 = info.Copy();
+                        _callService.OnCall(answerer, info);
+                        CallInfo info1 = _callService.Copy(info);
                         info1.CallState = CallState.NoAnswer;
-                        OnCall(caller, info1);
+                        _callService.OnCall(caller, info1);
                     }
                     caller.ClearConnection();
                     answerer.ClearConnection();
@@ -184,10 +170,10 @@ namespace Task3.ATS.Models
                 else
                 {
                     info.CallState = CallState.NoAnswer;
-                    OnCall(caller, info);
-                    CallInfo info1 = info.Copy();
+                    _callService.OnCall(caller, info);
+                    CallInfo info1 = _callService.Copy(info);
                     info1.CallState = CallState.Missed;
-                    OnCall(answerer, info1);
+                    _callService.OnCall(answerer, info1);
                     caller.ClearConnection();
                     caller.Port.ChangeState(PortState.ConnectedTerminal);
                 }

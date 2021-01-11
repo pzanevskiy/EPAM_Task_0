@@ -8,18 +8,18 @@ using Task3.Enums;
 
 namespace Task3.ATS.Controllers
 {
-    public class PortController
+    public class PortService
     {
         private ICollection<IPort> _ports;
 
-        public PortController()
+        public PortService()
         {
             _ports = new List<IPort>();
         }
 
         public void AddPort(IPort port)
-        {
-            port.State = PortState.Free;
+        {            
+            port.ChangeState(PortState.Free);
             _ports.Add(port);
         }
 
