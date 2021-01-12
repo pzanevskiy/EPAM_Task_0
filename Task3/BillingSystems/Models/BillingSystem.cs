@@ -74,7 +74,7 @@ namespace Task3.BillingSystems.Models
             foreach(var item in userCalls)
             {
                 Console.WriteLine($"{item.Key}\n");
-                foreach (var x in item)
+                foreach (var x in item.OrderBy(x => x.DateTimeStart))
                 {
                     Console.WriteLine($"{x}\n");
                 }
@@ -95,7 +95,7 @@ namespace Task3.BillingSystems.Models
             else
             {
                 Console.WriteLine($"{callState} calls");
-                foreach (var item in userCalls)
+                foreach (var item in userCalls.OrderBy(x => x.DateTimeStart))
                 {
                     Console.WriteLine($"{item}\n");
                 }
@@ -106,7 +106,8 @@ namespace Task3.BillingSystems.Models
         {
             days = days <= 0 ? days = 7 : days > 30 ? days = 30 : days;
             var userCalls = Calls
-                .Where(x => x.User.Equals(user) && x.DateTimeStart.Date >= DateTime.Now.AddDays(-days).Date)
+                .Where(x => x.User.Equals(user) 
+                && x.DateTimeStart.Date >= DateTime.Now.AddDays(-days).Date)
                 .GroupBy(x => x.CallState);
             if (userCalls.Count() == 0)
             {
@@ -117,7 +118,7 @@ namespace Task3.BillingSystems.Models
                 foreach (var item in userCalls)
                 {
                     Console.WriteLine($"{item.Key}\n");
-                    foreach (var x in item)
+                    foreach (var x in item.OrderBy(x=>x.DateTimeStart))
                     {
                         Console.WriteLine($"{x}\n");
                     }
@@ -142,7 +143,7 @@ namespace Task3.BillingSystems.Models
                 foreach (var item in userCalls)
                 {
                     Console.WriteLine($"{item.Key}\n");
-                    foreach (var x in item)
+                    foreach (var x in item.OrderBy(x => x.Duration))
                     {
                         Console.WriteLine($"{x}\n");
                     }
