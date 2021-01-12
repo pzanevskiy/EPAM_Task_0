@@ -73,12 +73,18 @@ namespace Task3
             userService.Answer(user1);
             Thread.Sleep(1000);
             userService.EndCall(user1);
+            Console.WriteLine(); 
+            
+            userService.Call(user2, p3);
+            userService.Answer(user3);
+            Thread.Sleep(1000);
+            userService.EndCall(user2);
             Console.WriteLine();
 
             foreach (var item in system.Users)
             {
                 Console.WriteLine($"{item.Name} history");
-                system.GetUserCallsByDuration(item, 0, 3);
+                system.GetUserCallsByUser(item, p3);
                 Console.WriteLine();
             }
             Console.WriteLine("Press any key to continue...\n\n\n");

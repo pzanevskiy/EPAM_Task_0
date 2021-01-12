@@ -15,12 +15,14 @@ namespace Task3.BillingSystems.Models
         private Dictionary<IPhoneNumber,bool> PhoneNumbers { get; set; }
         public List<CallInfo> Calls { get; set; }
         public List<IUser> Users { get; set; }
+        public Tariff Tariff { get; private set; }
 
         public BillingSystem(Station s, List<IPhoneNumber> phones)
         {
             Calls = new List<CallInfo>();
             Users = new List<IUser>();
             PhoneNumbers = new Dictionary<IPhoneNumber,bool>();
+            Tariff = new Tariff(0.2);
             foreach(var item in phones)
             {
                 PhoneNumbers.Add(item,true);
@@ -58,7 +60,7 @@ namespace Task3.BillingSystems.Models
             var freeNumber = PhoneNumbers.FirstOrDefault(x => x.Value.Equals(true)).Key;
             user.Terminal.Number = freeNumber;
             PhoneNumbers[freeNumber] = false;
-            user.Tariff = new Tariff();
+            user.Tariff = Tariff;
             Users.Add(user);
         }
 
@@ -132,7 +134,7 @@ namespace Task3.BillingSystems.Models
             minutes = minutes < 0 ?  0 : minutes >= 60 ?  59 : minutes;
             seconds = seconds < 0 ?  1 : seconds >= 60 ? 59 : seconds;
             var userCalls = Calls
-                .Where(x => x.User.Equals(user) && x.DateTimeStart.Date >= DateTime.Now.AddDays(-30).Date && x.Duration <= TimeSpan.ParseExact($"{minutes}:{seconds}", "m\\:s", null))
+                .Where(x => x.User.Equals(user) && x.DateTimeStart.Date >= DateTime.Now.AddMonths(-1).Date && x.Duration <= TimeSpan.ParseExact($"{minutes}:{seconds}", "m\\:s", null))
                 .GroupBy(x => x.CallState);
             if (userCalls.Count() == 0)
             {
@@ -150,7 +152,50 @@ namespace Task3.BillingSystems.Models
                     Console.WriteLine();
                 }
             }
+        }
 
+        public void GetUserCallsByCost(IUser user, double cost)
+        {
+            cost = cost <= 0 ? 0.15 : cost;
+            var userCalls = Calls
+                .Where(x => x.User.Equals(user) && x.CallState.Equals(CallState.Outgoing) && x.Cost <= cost);
+            if (userCalls.Count() == 0)
+            {
+                Console.WriteLine($"No calls up to {cost}$");
+            }
+            else
+            {
+                Console.WriteLine($"Calls up to {cost}$");
+                foreach (var item in userCalls.OrderBy(x => x.DateTimeStart))
+                {
+                    Console.WriteLine($"{item}\n");
+                }
+            }
+        }
+
+        public void GetUserCallsByUser(IUser user,IPhoneNumber number)
+        {
+            var userCalls = Calls
+                .Where(x => x.User.Equals(user) 
+                && x.DateTimeStart.Date >= DateTime.Now.AddMonths(-1).Date 
+                && (x.From.Equals(number) || x.To.Equals(number)))
+                .GroupBy(x => x.CallState);
+            if (userCalls.Count() == 0)
+            {
+                Console.WriteLine($"No calls with this number {number}");
+            }
+            else
+            {
+                foreach (var item in userCalls)
+                {
+                    Console.WriteLine($"{item.Key}\n");
+                    foreach (var x in item.OrderBy(x => x.DateTimeStart))
+                    {
+                        Console.WriteLine($"{x}\n");
+                    }
+                    Console.WriteLine();
+                }
+            }
         }
     }
 }
