@@ -62,7 +62,7 @@ namespace Task3.BillingSystems.Models
             Users.Add(user);
         }
 
-        public void GetUserInfo(IUser user)
+        public void GetUserCallsPerMonth(IUser user)
         {
             //Calls.Add(new CallInfo() { User = user, From = user.Terminal.Number, DateTimeStart = DateTime.Now.AddDays(-29) });
             //Calls.Add(new CallInfo() { User = user, From = user.Terminal.Number, DateTimeStart = DateTime.Now.AddDays(-30) });
@@ -80,6 +80,76 @@ namespace Task3.BillingSystems.Models
                 }
                 Console.WriteLine();
             }
+        }
+
+        public void GetUserCallsByCallStatePerMonth(IUser user, CallState callState)
+        {
+            var userCalls = Calls
+                .Where(x => x.User.Equals(user)
+                && x.DateTimeStart.Date >= DateTime.Now.AddMonths(-1).Date 
+                && x.CallState.Equals(callState));
+            if (userCalls.Count()==0)
+            {
+                Console.WriteLine($"No {callState} calls");
+            }
+            else
+            {
+                Console.WriteLine($"{callState} calls");
+                foreach (var item in userCalls)
+                {
+                    Console.WriteLine($"{item}\n");
+                }
+            }
+        }
+
+        public void GetUserCallsByDate(IUser user,int days)
+        {
+            days = days <= 0 ? days = 7 : days > 30 ? days = 30 : days;
+            var userCalls = Calls
+                .Where(x => x.User.Equals(user) && x.DateTimeStart.Date >= DateTime.Now.AddDays(-days).Date)
+                .GroupBy(x => x.CallState);
+            if (userCalls.Count() == 0)
+            {
+                Console.WriteLine($"No calls between {DateTime.Now.AddDays(-days):d} and {DateTime.Now:d}");
+            }
+            else
+            {
+                foreach (var item in userCalls)
+                {
+                    Console.WriteLine($"{item.Key}\n");
+                    foreach (var x in item)
+                    {
+                        Console.WriteLine($"{x}\n");
+                    }
+                    Console.WriteLine();
+                }
+            }
+        }
+
+        public void GetUserCallsByDuration(IUser user, int minutes,int seconds)
+        {
+            minutes = minutes < 0 ?  0 : minutes >= 60 ?  59 : minutes;
+            seconds = seconds < 0 ?  1 : seconds >= 60 ? 59 : seconds;
+            var userCalls = Calls
+                .Where(x => x.User.Equals(user) && x.DateTimeStart.Date >= DateTime.Now.AddDays(-30).Date && x.Duration <= TimeSpan.ParseExact($"{minutes}:{seconds}", "m\\:s", null))
+                .GroupBy(x => x.CallState);
+            if (userCalls.Count() == 0)
+            {
+                Console.WriteLine($"No calls up to {TimeSpan.ParseExact($"{minutes}:{seconds}", "m\\:s", null):mm\\:ss}");
+            }
+            else
+            {
+                foreach (var item in userCalls)
+                {
+                    Console.WriteLine($"{item.Key}\n");
+                    foreach (var x in item)
+                    {
+                        Console.WriteLine($"{x}\n");
+                    }
+                    Console.WriteLine();
+                }
+            }
+
         }
     }
 }

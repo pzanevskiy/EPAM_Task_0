@@ -14,7 +14,9 @@ namespace Task3
     class Program
     {
         static void Main(string[] args)
-        {           
+        {
+            Console.WriteLine(TimeSpan.ParseExact("15:8", "m\\:s", null).ToString("mm\\:ss")); 
+
             IPort port = new Port();
             Station station = new Station(new List<IPort>() { new Port(), new Port() });
             station.AddPort(port);
@@ -47,11 +49,11 @@ namespace Task3
             userService.EndCall(user2);
             Console.WriteLine();
 
-            //userService.Call(user1, p2);
-            //userService.Answer(user2);
-            //Thread.Sleep(3000);
-            //userService.EndCall(user2);
-            //Console.WriteLine();
+            userService.Call(user1, p2);
+            userService.Answer(user2);
+            Thread.Sleep(3000);
+            userService.EndCall(user1);
+            Console.WriteLine();
 
             //userService.Call(user1, p2);
             //userService.Answer(user2);
@@ -61,7 +63,7 @@ namespace Task3
 
 
             userService.Call(user2, p1);
-            userService.Call(user3, p1);
+            //userService.Call(user3, p1);
             userService.Reject(user1);
             Console.WriteLine();
 
@@ -78,7 +80,7 @@ namespace Task3
             foreach (var item in system.Users)
             {
                 Console.WriteLine($"{item.Name} history");
-                system.GetUserInfo(item);
+                system.GetUserCallsByDuration(item, 0, 1);
                 Console.WriteLine();
             }
             Console.WriteLine("Press any key to continue...\n\n\n");

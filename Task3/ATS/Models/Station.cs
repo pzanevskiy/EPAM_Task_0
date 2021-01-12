@@ -123,7 +123,7 @@ namespace Task3.ATS.Models
         {
             var caller = GetPortByPhoneNumber((sender as Terminal).Connection.From).Terminal;
             var info = GetCallInfo(caller.Connection);
-            info.Duration = DateTime.Now - info.DateTimeStart;
+            info.Duration = TimeSpan.ParseExact($"{DateTime.Now - info.DateTimeStart:mm\\:ss}","m\\:s",null);
             info.CallState = CallState.Outgoing;
             _callService.OnCall(caller, info);
             var answerer = GetPortByPhoneNumber(caller.Connection.To).Terminal;
