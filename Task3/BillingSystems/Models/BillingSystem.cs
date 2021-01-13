@@ -12,12 +12,12 @@ namespace Task3.BillingSystems.Models
 {
     public class BillingSystem : IBillingSystem
     {
-        private Dictionary<IPhoneNumber,bool> PhoneNumbers { get; set; }
-        public List<CallInfo> Calls { get; set; }
-        public List<IUser> Users { get; set; }
+        private IDictionary<IPhoneNumber,bool> PhoneNumbers { get; set; }
+        public IList<CallInfo> Calls { get; set; }
+        public IList<IUser> Users { get; set; }
         public Tariff Tariff { get; private set; }
 
-        public BillingSystem(Station s, List<IPhoneNumber> phones)
+        public BillingSystem(IStation s, List<IPhoneNumber> phones)
         {
             Calls = new List<CallInfo>();
             Users = new List<IUser>();
@@ -30,16 +30,14 @@ namespace Task3.BillingSystems.Models
             RegisterHandlerForStation(s);
         }
 
-
-
-        private void RegisterHandlerForStation(Station station)
+        private void RegisterHandlerForStation(IStation station)
         {
             station.CallService.Call += (sender, callInfo) =>
             {
                 callInfo.User = GetUserByTerminal(sender as Terminal);
                 if (callInfo.CallState == CallState.Outgoing)
                 {
-                    callInfo.Cost = callInfo.User.Tariff.CostPerSecond * callInfo.Duration.Seconds;
+                    callInfo.Cost = callInfo.User.Tariff.CostPerSecond * (callInfo.Duration.Minutes*60+callInfo.Duration.Seconds);
                     callInfo.User.Money -= callInfo.Cost;
                 }
                 else
@@ -66,10 +64,6 @@ namespace Task3.BillingSystems.Models
 
         public void GetUserCallsPerMonth(IUser user)
         {
-            //Calls.Add(new CallInfo() { User = user, From = user.Terminal.Number, DateTimeStart = DateTime.Now.AddDays(-29) });
-            //Calls.Add(new CallInfo() { User = user, From = user.Terminal.Number, DateTimeStart = DateTime.Now.AddDays(-30) });
-            //Calls.Add(new CallInfo() { User = user, From = user.Terminal.Number, DateTimeStart = DateTime.Now.AddDays(-31) });
-            //Calls.Add(new CallInfo() { User = user, From = user.Terminal.Number, DateTimeStart = DateTime.Now.AddDays(-32) });
             var userCalls = Calls
                 .Where(x => x.User.Equals(user) && x.DateTimeStart.Date>=DateTime.Now.AddMonths(-1).Date)
                 .GroupBy(x => x.CallState);
@@ -87,9 +81,7 @@ namespace Task3.BillingSystems.Models
         public void GetUserCallsByCallStatePerMonth(IUser user, CallState callState)
         {
             var userCalls = Calls
-                .Where(x => x.User.Equals(user)
-                && x.DateTimeStart.Date >= DateTime.Now.AddMonths(-1).Date 
-                && x.CallState.Equals(callState));
+                .Where(x => x.User.Equals(user) && x.DateTimeStart.Date >= DateTime.Now.AddMonths(-1).Date && x.CallState.Equals(callState));
             if (userCalls.Count()==0)
             {
                 Console.WriteLine($"No {callState} calls");
@@ -108,8 +100,7 @@ namespace Task3.BillingSystems.Models
         {
             days = days <= 0 ? days = 7 : days > 30 ? days = 30 : days;
             var userCalls = Calls
-                .Where(x => x.User.Equals(user) 
-                && x.DateTimeStart.Date >= DateTime.Now.AddDays(-days).Date)
+                .Where(x => x.User.Equals(user) && x.DateTimeStart.Date >= DateTime.Now.AddDays(-days).Date)
                 .GroupBy(x => x.CallState);
             if (userCalls.Count() == 0)
             {
@@ -176,9 +167,7 @@ namespace Task3.BillingSystems.Models
         public void GetUserCallsByUser(IUser user,IPhoneNumber number)
         {
             var userCalls = Calls
-                .Where(x => x.User.Equals(user) 
-                && x.DateTimeStart.Date >= DateTime.Now.AddMonths(-1).Date 
-                && (x.From.Equals(number) || x.To.Equals(number)))
+                .Where(x => x.User.Equals(user) && x.DateTimeStart.Date >= DateTime.Now.AddMonths(-1).Date && (x.From.Equals(number) || x.To.Equals(number)))
                 .GroupBy(x => x.CallState);
             if (userCalls.Count() == 0)
             {

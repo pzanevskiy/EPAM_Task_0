@@ -16,14 +16,14 @@ namespace Task3
         static void Main(string[] args)
         {
             IPort port = new Port();
-            Station station = new Station(new List<IPort>() { new Port(), new Port() });
+            IStation station = new Station(new List<IPort>() { new Port(), new Port() });
             station.AddPort(port);
 
             IPhoneNumber p1 = new PhoneNumber("11111111");
             IPhoneNumber p2 = new PhoneNumber("22222222");
             IPhoneNumber p3 = new PhoneNumber("33333333");
 
-            BillingSystem system = new BillingSystem(station, new List<IPhoneNumber>() { p1, p2, p3 });
+            IBillingSystem system = new BillingSystem(station, new List<IPhoneNumber>() { p1, p2, p3 });
 
             ITerminal t1 = new Terminal();
             ITerminal t2 = new Terminal();
@@ -59,7 +59,6 @@ namespace Task3
             userService.EndCall(user2);
             Console.WriteLine();
 
-
             userService.Call(user2, p1);
             //userService.Call(user3, p1);
             userService.Reject(user1);
@@ -84,7 +83,7 @@ namespace Task3
             foreach (var item in system.Users)
             {
                 Console.WriteLine($"{item.Name} history");
-                system.GetUserCallsByUser(item, p3);
+                system.GetUserCallsPerMonth(item);
                 Console.WriteLine();
             }
             Console.WriteLine("Press any key to continue...\n\n\n");

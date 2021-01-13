@@ -38,10 +38,6 @@ namespace Task3.BillingSystems.Service
         {
             user.Terminal.EndCall();
         }
-
-        public void GetCallsInfo()
-        {
-
-        }
+       
     }
 }
