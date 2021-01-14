@@ -83,7 +83,7 @@ namespace Task3
             foreach (var item in system.Users)
             {
                 Console.WriteLine($"{item.Name} history");
-                system.GetUserCallsPerMonth(item);
+                system.CallService.GetUserCallsPerMonth(item);
                 Console.WriteLine();
             }
             Console.WriteLine("Press any key to continue...\n\n\n");

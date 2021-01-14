@@ -15,7 +15,7 @@ namespace Task3.ATS.Models
         public PortState State
         {
             get => _portState;
-            private set
+            set
             {               
                 _portState = value;
                 OnStateChanged(this, _portState);
@@ -41,21 +41,12 @@ namespace Task3.ATS.Models
         public Port()
         {
             Id = Guid.NewGuid();
-            RegisterEventHandlerForPort();
             State = PortState.Disconnected;
         }
 
         protected virtual void OnStateChanged(object sender, PortState state)
         {
             StateChanged?.Invoke(sender,state);
-        }
-
-        protected virtual void RegisterEventHandlerForPort()
-        {
-            StateChanged += (sender, eventArgs) =>
-            {               
-                Console.WriteLine($"Port #{Id} state changed to {eventArgs}");
-            };
         }
 
         private void RegisterEventHandlersForTerminal(ITerminal terminal)

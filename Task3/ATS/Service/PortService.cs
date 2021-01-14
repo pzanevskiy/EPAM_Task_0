@@ -19,7 +19,7 @@ namespace Task3.ATS.Controllers
 
         public void AddPort(IPort port)
         {            
-            port.ChangeState(PortState.Free);
+            ChangeState(port,PortState.Free);
             _ports.Add(port);
         }
 
@@ -31,6 +31,11 @@ namespace Task3.ATS.Controllers
         public IPort GetPortByPhoneNumber(IPhoneNumber phoneNumber)
         {
             return _ports.FirstOrDefault(x => x.Terminal.Number.Equals(phoneNumber));
+        }
+
+        public void ChangeState(IPort port,PortState portState)
+        {
+            port.State = portState;
         }
 
         public void CreatePort()

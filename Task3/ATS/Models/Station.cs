@@ -47,6 +47,10 @@ namespace Task3.ATS.Models
             port.Accept += OnAccept;
             port.End += OnEnd;
             port.Reject += OnReject;
+            port.StateChanged += (sender, eventArgs) =>
+            {
+                Console.WriteLine($"Port #{(sender as Port).Id} state changed to {eventArgs}");
+            };
         }
 
         public IPort GetPortByPhoneNumber(IPhoneNumber phone)
@@ -61,7 +65,7 @@ namespace Task3.ATS.Models
 
             if (answerer != null && caller != null)
             {
-                caller.Port.ChangeState(PortState.Busy);
+                _portService.ChangeState(caller.Port, PortState.Busy);
                 caller.RememberConnection(caller.Number, phone);
                 CallInfo info = new CallInfo
                 {
@@ -92,7 +96,7 @@ namespace Task3.ATS.Models
         private void OnIncomingCall(object sender, IPhoneNumber phone)
         {
             var answerer = sender as Terminal;
-            answerer.Port.ChangeState(PortState.Busy);
+            _portService.ChangeState(answerer.Port, PortState.Busy);
             answerer.RememberConnection(phone, answerer.Number);
         }
 
@@ -115,8 +119,8 @@ namespace Task3.ATS.Models
             info1.CallState = CallState.Incoming;
             _callService.OnCall(answerer, info1);
             _callService.RemoveCall(info);
-            caller.Port.ChangeState(PortState.ConnectedTerminal);
-            answerer.Port.ChangeState(PortState.ConnectedTerminal);
+            _portService.ChangeState(caller.Port, PortState.ConnectedTerminal);
+            _portService.ChangeState(answerer.Port, PortState.ConnectedTerminal);
         }
 
         private void OnReject(object sender, EventArgs e)
@@ -148,8 +152,8 @@ namespace Task3.ATS.Models
                     caller.ClearConnection();
                     answerer.ClearConnection();
                     _callService.RemoveCall(info);
-                    caller.Port.ChangeState(PortState.ConnectedTerminal);
-                    answerer.Port.ChangeState(PortState.ConnectedTerminal);
+                    _portService.ChangeState(caller.Port, PortState.ConnectedTerminal);
+                    _portService.ChangeState(answerer.Port, PortState.ConnectedTerminal);
                 }
                 else
                 {
@@ -159,7 +163,7 @@ namespace Task3.ATS.Models
                     info1.CallState = CallState.Missed;
                     _callService.OnCall(answerer, info1);
                     caller.ClearConnection();
-                    caller.Port.ChangeState(PortState.ConnectedTerminal);
+                    _portService.ChangeState(caller.Port, PortState.ConnectedTerminal);
                 }
             }
         }
