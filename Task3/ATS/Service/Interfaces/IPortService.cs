@@ -10,7 +10,7 @@ namespace Task3.ATS.Service.Interfaces
     {
         public void AddPort(IPort port);
         public IPort GetFreePort();
-        public IPort GetPortByPhoneNumber(IPhoneNumber phoneNumber);
+        //public IPort GetPortByPhoneNumber(IPhoneNumber phoneNumber);
         public void ChangeState(IPort port, PortState portState);
     }
 }

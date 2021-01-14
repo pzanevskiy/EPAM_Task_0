@@ -24,6 +24,20 @@ namespace Task3.BillingSystems.Service
             Calls.Add(info);
         }
 
+        public void SetAdditionalInfo(IUser user,CallInfo callInfo)
+        {
+            callInfo.User = user;
+            if (callInfo.CallState == CallState.Outgoing)
+            {
+                callInfo.Cost = callInfo.User.Tariff.CostPerSecond * (callInfo.Duration.Minutes * 60 + callInfo.Duration.Seconds);
+                callInfo.User.Money -= callInfo.Cost;
+            }
+            else
+            {
+                callInfo.Cost = 0;
+            }
+        }
+
         public void GetUserCallsPerMonth(IUser user)
         {
             var userCalls = Calls

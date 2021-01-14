@@ -9,7 +9,7 @@ namespace Task3.ATS.Models
     public class Port : IPort
     {      
         private PortState _portState;
-        private ITerminal _terminal;
+        //private ITerminal _terminal;
 
         public Guid Id { get; set; }
         public PortState State
@@ -21,22 +21,22 @@ namespace Task3.ATS.Models
                 OnStateChanged(this, _portState);
             }
         }
-        public ITerminal Terminal
-        {
-            get => _terminal;
-            set
-            {
-                _terminal = value;
-                RegisterEventHandlersForTerminal(_terminal);
-            }
-        }     
+        //public ITerminal Terminal
+        //{
+        //    get => _terminal;
+        //    set
+        //    {
+        //        _terminal = value;
+        //        RegisterEventHandlersForTerminal(_terminal);
+        //    }
+        //}     
 
         public event EventHandler<PortState> StateChanged;
-        public event EventHandler<IPhoneNumber> OutgoingCall;
-        public event EventHandler<IPhoneNumber> IncomingCall;
-        public event EventHandler Accept;
-        public event EventHandler Reject;
-        public event EventHandler End;
+        //public event EventHandler<IPhoneNumber> OutgoingCall;
+        //public event EventHandler<IPhoneNumber> IncomingCall;
+        //public event EventHandler Accept;
+        //public event EventHandler Reject;
+        //public event EventHandler End;
 
         public Port()
         {
@@ -48,32 +48,7 @@ namespace Task3.ATS.Models
         {
             StateChanged?.Invoke(sender,state);
         }
-
-        private void RegisterEventHandlersForTerminal(ITerminal terminal)
-        {
-            terminal.OutgoingCall += (sender, phone) =>
-            {
-                State = PortState.Busy;
-                OutgoingCall?.Invoke(sender, phone);
-            };        
-            terminal.IncomingCall += (sender, phone) =>
-            {
-                State = PortState.Busy;
-                IncomingCall?.Invoke(sender, phone);
-            };
-            terminal.Accept += (sender, e) =>
-            {
-                Accept.Invoke(sender, e);
-            };
-            terminal.End += (sender, e) =>
-            {
-                End.Invoke(sender, e);
-            };
-            terminal.Reject += (sender, e )=>
-            {
-                Reject.Invoke(sender, e);
-            };
-        }
+        
 
         public void ChangeState(PortState state)
         {

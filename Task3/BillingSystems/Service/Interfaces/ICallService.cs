@@ -11,7 +11,7 @@ namespace Task3.BillingSystems.Service.Interfaces
     public interface ICallService
     {
         public void AddCall(CallInfo info);
-
+        public void SetAdditionalInfo(IUser user, CallInfo callInfo);
         public void GetUserCallsPerMonth(IUser user);
         public void GetUserCallsByCallStatePerMonth(IUser user, CallState callState);
         public void GetUserCallsByDate(IUser user, int days);

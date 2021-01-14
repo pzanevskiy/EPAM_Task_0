@@ -11,18 +11,10 @@ namespace Task3.ATS.Models
         private IPort _port;
 
         public Connection Connection { get; private set; }
+        public IPhoneNumber Number { get; set; }
+        public IPort Port { get; private set; }
 
-        public IPhoneNumber Number
-        {
-            get => _phoneNumber;
-            set => _phoneNumber = value;
-        }
-
-        public IPort Port
-        {
-            get => _port;
-            private set => _port = value;
-        }
+        public bool IsFree { get; set; }
 
         public event EventHandler<IPhoneNumber> OutgoingCall;
         public event EventHandler<IPhoneNumber> IncomingCall;
@@ -34,6 +26,7 @@ namespace Task3.ATS.Models
 
         public Terminal()
         {
+            IsFree = true;
             RegisterEventHandlerForTerminal();
         }
 
@@ -42,7 +35,7 @@ namespace Task3.ATS.Models
             Number = phoneNumber;
         }
 
-        public virtual void RegisterEventHandlerForTerminal()
+        protected virtual void RegisterEventHandlerForTerminal()
         {
             OutgoingCall += (sender, phone) =>
             {
@@ -152,14 +145,23 @@ namespace Task3.ATS.Models
             OnEndCall(this, null);
         }
 
+        protected virtual void OnConnect(IPort port)
+        {
+            ConnectingToPort?.Invoke(this, port);
+        }
+
+        protected virtual void OnDisconnect(IPort port)
+        {
+            DisconnectingFromPort?.Invoke(this, Port);
+        }
+
         public void ConnectToPort(IPort port)
         {            
             if (port.State == Enums.PortState.Free && Port==null)
             {
-                port.Terminal = this;
                 Port = port;
                 Port.ChangeState(Enums.PortState.ConnectedTerminal);
-                ConnectingToPort?.Invoke(this, port);
+                OnConnect(port);
             }
             else
             {
@@ -171,9 +173,8 @@ namespace Task3.ATS.Models
         {
             if (Port != null && Port.State.Equals(Enums.PortState.ConnectedTerminal))
             {
-                DisconnectingFromPort?.Invoke(this, Port);
+                OnDisconnect(Port);
                 Port.ChangeState(Enums.PortState.Free);
-                Port.Terminal = null;
                 Port = null;
             }
             else
@@ -205,13 +206,14 @@ namespace Task3.ATS.Models
         public override bool Equals(object obj)
         {
             return obj is Terminal terminal &&
-                   EqualityComparer<IPhoneNumber>.Default.Equals(_phoneNumber, terminal._phoneNumber) &&
-                   EqualityComparer<IPort>.Default.Equals(_port, terminal._port);
+                   EqualityComparer<IPhoneNumber>.Default.Equals(Number, terminal.Number) &&
+                   EqualityComparer<IPort>.Default.Equals(Port, terminal.Port) &&
+                   IsFree == terminal.IsFree;
         }
 
         public override int GetHashCode()
         {
             return HashCode.Combine(_phoneNumber);
-        }        
+        }
     }
 }

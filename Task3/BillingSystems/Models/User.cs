@@ -18,10 +18,9 @@ namespace Task3.BillingSystems.Models
 
         }
 
-        public User(string name, ITerminal terminal, double money)
+        public User(string name, double money)
         {
-            Name = name;
-            Terminal = terminal;
+            Name = name;          
             Money = money;
         }
 
@@ -34,13 +33,12 @@ namespace Task3.BillingSystems.Models
         {
             return obj is User user &&
                    Name == user.Name &&
-                   EqualityComparer<ITerminal>.Default.Equals(Terminal, user.Terminal) &&
-                   Money == user.Money;
+                   EqualityComparer<ITerminal>.Default.Equals(Terminal, user.Terminal);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name, Terminal, Money);
+            return HashCode.Combine(Name, Terminal);
         }
 
     }

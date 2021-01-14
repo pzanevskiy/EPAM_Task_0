@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Task3.ATS.Controllers;
 using Task3.ATS.Models.Interfaces;
+using Task3.ATS.Service;
 using Task3.ATS.Service.Interfaces;
 using Task3.Enums;
 
@@ -13,23 +12,36 @@ namespace Task3.ATS.Models
     {
         private IPortService _portService;
         private ICallService _callService;
+        private ITerminalService _terminalService;
 
         public ICallService CallService => _callService;
+        public ITerminalService TerminalService => _terminalService;
 
         public Station()
         {
             _portService = new PortService();
             _callService = new CallService();
+            _terminalService = new TerminalService();
         }
 
-        public Station(ICollection<IPort> ports) : this()
+        public Station(ICollection<IPort> ports, ICollection<ITerminal> terminals) : this()
         {                       
             foreach(var item in ports)
             {
                 AddPort(item);
             }
+            foreach(var terminal in terminals)
+            {
+                AddTerminal(terminal);
+            }
         }
        
+        public void AddTerminal(ITerminal terminal)
+        {
+            RegisterEventHandlersForTerminal(terminal);
+            _terminalService.AddTerminal(terminal);
+        }
+
         public IPort GetFreePort()
         {
             return _portService.GetFreePort();
@@ -41,32 +53,37 @@ namespace Task3.ATS.Models
             _portService.AddPort(port);
         }
 
+        private void RegisterEventHandlersForTerminal(ITerminal terminal)
+        {
+            terminal.OutgoingCall += OnOutgoingCall;
+            terminal.IncomingCall += OnIncomingCall;
+            terminal.Accept += OnAccept;
+            terminal.End += OnEnd;
+            terminal.Reject += OnReject;
+        }
+
         private void RegisterEventHandlersForPort(IPort port)
         {
-            port.OutgoingCall += OnOutgoingCall;
-            port.IncomingCall += OnIncomingCall;
-            port.Accept += OnAccept;
-            port.End += OnEnd;
-            port.Reject += OnReject;
             port.StateChanged += (sender, eventArgs) =>
             {
                 Console.WriteLine($"Port #{(sender as Port).Id} state changed to {eventArgs}");
             };
         }
 
-        public IPort GetPortByPhoneNumber(IPhoneNumber phone)
+        public void GetPortByPhoneNumber(IPhoneNumber phone)
         {
-            return _portService.GetPortByPhoneNumber(phone);
+           // return _portService.GetPortByPhoneNumber(phone);
         }        
 
         private void OnOutgoingCall(object sender, IPhoneNumber phone)
         {
-            var answerer = GetPortByPhoneNumber(phone).Terminal;
+            var answerer = _terminalService.FindTerminalByNumber(phone);
             var caller = sender as Terminal;
 
             if (answerer != null && caller != null)
             {
                 caller.RememberConnection(caller.Number, phone);
+                _portService.ChangeState(caller.Port, PortState.Busy);
                 CallInfo info = new CallInfo
                 {
                     From = caller.Number,
@@ -96,27 +113,28 @@ namespace Task3.ATS.Models
         private void OnIncomingCall(object sender, IPhoneNumber phone)
         {
             var answerer = sender as Terminal;
+            _portService.ChangeState(answerer.Port, PortState.Busy);
             answerer.RememberConnection(phone, answerer.Number);
         }
 
         private void OnAccept(object sender, EventArgs e)
         {
-            var caller = GetPortByPhoneNumber((sender as Terminal).Connection.From).Terminal;
+            var caller = _terminalService.FindTerminalByNumber((sender as Terminal).Connection.From);
             var info = _callService.GetCallInfo(caller.Connection);
             info.DateTimeStart = DateTime.Now;
         }
 
         private void OnEnd(object sender, EventArgs e)
         {
-            var caller = GetPortByPhoneNumber((sender as Terminal).Connection.From).Terminal;
+            var caller = _terminalService.FindTerminalByNumber((sender as Terminal).Connection.From);
             var info = _callService.GetCallInfo(caller.Connection);
             info.Duration = TimeSpan.ParseExact($"{DateTime.Now - info.DateTimeStart:mm\\:ss}","m\\:s",null);
             info.CallState = CallState.Outgoing;
-            _callService.OnCall(caller, info);
-            var answerer = GetPortByPhoneNumber(caller.Connection.To).Terminal;
+            _callService.SaveCall(caller, info);
+            var answerer = _terminalService.FindTerminalByNumber(caller.Connection.To);
             CallInfo info1 = _callService.Copy(info);
             info1.CallState = CallState.Incoming;
-            _callService.OnCall(answerer, info1);
+            _callService.SaveCall(answerer, info1);
             _callService.RemoveCall(info);
             _portService.ChangeState(caller.Port, PortState.ConnectedTerminal);
             _portService.ChangeState(answerer.Port, PortState.ConnectedTerminal);
@@ -126,27 +144,27 @@ namespace Task3.ATS.Models
         {
             if ((sender as Terminal).Connection != null)
             {
-                var caller = GetPortByPhoneNumber((sender as Terminal).Connection.From).Terminal;
+                var caller = _terminalService.FindTerminalByNumber((sender as Terminal).Connection.From);
                 var info = _callService.GetCallInfo(caller.Connection);
-                var answerer = GetPortByPhoneNumber(caller.Connection.To).Terminal;
+                var answerer = _terminalService.FindTerminalByNumber(caller.Connection.To);
 
                 if (caller.Connection.Equals(answerer.Connection))
                 {
                     if (caller.Equals(sender))
                     {
                         info.CallState = CallState.NoAnswer;
-                        _callService.OnCall(caller, info);
+                        _callService.SaveCall(caller, info);
                         CallInfo info1 = _callService.Copy(info);
                         info1.CallState = CallState.Missed;
-                        _callService.OnCall(answerer, info1);
+                        _callService.SaveCall(answerer, info1);
                     }
                     else
                     {
                         info.CallState = CallState.Rejected;
-                        _callService.OnCall(answerer, info);
+                        _callService.SaveCall(answerer, info);
                         CallInfo info1 = _callService.Copy(info);
                         info1.CallState = CallState.NoAnswer;
-                        _callService.OnCall(caller, info1);
+                        _callService.SaveCall(caller, info1);
                     }
                     caller.ClearConnection();
                     answerer.ClearConnection();
@@ -157,10 +175,10 @@ namespace Task3.ATS.Models
                 else
                 {
                     info.CallState = CallState.NoAnswer;
-                    _callService.OnCall(caller, info);
+                    _callService.SaveCall(caller, info);
                     CallInfo info1 = _callService.Copy(info);
                     info1.CallState = CallState.Missed;
-                    _callService.OnCall(answerer, info1);
+                    _callService.SaveCall(answerer, info1);
                     caller.ClearConnection();
                     _portService.ChangeState(caller.Port, PortState.ConnectedTerminal);
                 }

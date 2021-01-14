@@ -16,30 +16,31 @@ namespace Task3
         static void Main(string[] args)
         {
             IPort port = new Port();
-            IStation station = new Station(new List<IPort>() { new Port(), new Port() });
-            station.AddPort(port);
-
-            IPhoneNumber p1 = new PhoneNumber("11111111");
-            IPhoneNumber p2 = new PhoneNumber("22222222");
-            IPhoneNumber p3 = new PhoneNumber("33333333");
-
-            IBillingSystem system = new BillingSystem(station, new List<IPhoneNumber>() { p1, p2, p3 });
 
             ITerminal t1 = new Terminal();
             ITerminal t2 = new Terminal();
             ITerminal t3 = new Terminal();
 
-            IUser user1 = new User("Ivan", t1, 100);
-            IUser user2 = new User("Petya", t2, 100);
-            IUser user3 = new User("Dima", t3, 100);
+            IPhoneNumber p1 = new PhoneNumber("11111111");
+            IPhoneNumber p2 = new PhoneNumber("22222222");
+            IPhoneNumber p3 = new PhoneNumber("33333333");
+
+            IStation station = new Station(new List<IPort>() { new Port(), new Port() }, new List<ITerminal>() { t1, t2, t3 });
+            station.AddPort(port);
+
+            IBillingSystem system = new BillingSystem(station, new List<IPhoneNumber>() { p1, p2, p3 });
+
+            IUser user1 = new User("Ivan", 100);
+            IUser user2 = new User("Petya", 100);
+            IUser user3 = new User("Dima", 100);
             
             system.RegisterUser(user1);
             system.RegisterUser(user2);
             system.RegisterUser(user3);
             IUserService userService = new UserService();
-            userService.ConnectToPort(user1,port);
-            userService.ConnectToPort(user2, station.GetFreePort());
-            userService.ConnectToPort(user3, station.GetFreePort());
+            userService.ConnectToPort(user1, system.GetFreePort());
+            userService.ConnectToPort(user2, system.GetFreePort());
+            userService.ConnectToPort(user3, system.GetFreePort());
 
             userService.Call(user1, p2);
             userService.Answer(user2);
@@ -60,7 +61,7 @@ namespace Task3
             Console.WriteLine();
 
             userService.Call(user2, p1);
-            //userService.Call(user3, p1);
+            userService.Call(user3, p1);
             userService.Reject(user1);
             Console.WriteLine();
 
@@ -83,7 +84,7 @@ namespace Task3
             foreach (var item in system.Users)
             {
                 Console.WriteLine($"{item.Name} history");
-                system.CallService.GetUserCallsPerMonth(item);
+                system.CallService.GetUserCallsByCallStatePerMonth(item, Enums.CallState.NoAnswer);
                 Console.WriteLine();
             }
             Console.WriteLine("Press any key to continue...\n\n\n");

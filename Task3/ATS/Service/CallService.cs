@@ -5,7 +5,7 @@ using System.Text;
 using Task3.ATS.Models;
 using Task3.ATS.Service.Interfaces;
 
-namespace Task3.ATS.Controllers
+namespace Task3.ATS.Service
 {
     public class CallService : ICallService
     {
@@ -44,7 +44,12 @@ namespace Task3.ATS.Controllers
             };
         }
 
-        public void OnCall(object sender, CallInfo call)
+        public void SaveCall(object sender, CallInfo call)
+        {
+            OnCall(sender, call);
+        }
+
+        protected virtual void OnCall(object sender, CallInfo call)
         {
             Call?.Invoke(sender, call);
         }

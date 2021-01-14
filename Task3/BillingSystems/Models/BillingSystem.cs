@@ -17,7 +17,7 @@ namespace Task3.BillingSystems.Models
         private IDictionary<IPhoneNumber,bool> PhoneNumbers { get; set; }
         public IList<IUser> Users { get; set; }
         public Tariff Tariff { get; private set; }
-
+        private IStation Station { get; set; }
         public ICallService CallService { get; private set; }
 
         public BillingSystem(IStation s, List<IPhoneNumber> phones)
@@ -26,6 +26,7 @@ namespace Task3.BillingSystems.Models
             Users = new List<IUser>();
             PhoneNumbers = new Dictionary<IPhoneNumber, bool>();
             Tariff = new Tariff(0.2);
+            Station = s;
             foreach(var item in phones)
             {
                 PhoneNumbers.Add(item,true);
@@ -37,16 +38,8 @@ namespace Task3.BillingSystems.Models
         {
             station.CallService.Call += (sender, callInfo) =>
             {
-                callInfo.User = GetUserByTerminal(sender as Terminal);
-                if (callInfo.CallState == CallState.Outgoing)
-                {
-                    callInfo.Cost = callInfo.User.Tariff.CostPerSecond * (callInfo.Duration.Minutes*60+callInfo.Duration.Seconds);
-                    callInfo.User.Money -= callInfo.Cost;
-                }
-                else
-                {
-                    callInfo.Cost = 0;
-                }
+                var user = GetUserByTerminal(sender as Terminal);
+                CallService.SetAdditionalInfo(user, callInfo);
                 CallService.AddCall(callInfo);
             };
         }
@@ -59,10 +52,16 @@ namespace Task3.BillingSystems.Models
         public void RegisterUser(IUser user)
         {
             var freeNumber = PhoneNumbers.FirstOrDefault(x => x.Value.Equals(true)).Key;
+            user.Terminal = Station.TerminalService.GetFreeTerminal();
             user.Terminal.Number = freeNumber;
             PhoneNumbers[freeNumber] = false;
             user.Tariff = Tariff;
             Users.Add(user);
+        }
+
+        public IPort GetFreePort()
+        {
+            return Station.GetFreePort();
         }
     }
 }

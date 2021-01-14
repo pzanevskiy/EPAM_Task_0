@@ -13,6 +13,6 @@ namespace Task3.ATS.Service.Interfaces
         public void RemoveCall(CallInfo call);
         public CallInfo GetCallInfo(Connection connection);
         public CallInfo Copy(CallInfo callInfo);
-        public void OnCall(object sender, CallInfo call);
+        public void SaveCall(object sender, CallInfo call);
     }
 }

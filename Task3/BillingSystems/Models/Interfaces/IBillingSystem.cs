@@ -14,5 +14,6 @@ namespace Task3.BillingSystems.Models.Interfaces
         public ICallService CallService { get; }
 
         public void RegisterUser(IUser user);
+        public IPort GetFreePort();
     }
 }

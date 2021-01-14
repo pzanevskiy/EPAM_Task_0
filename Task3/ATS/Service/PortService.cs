@@ -7,7 +7,7 @@ using Task3.ATS.Models.Interfaces;
 using Task3.ATS.Service.Interfaces;
 using Task3.Enums;
 
-namespace Task3.ATS.Controllers
+namespace Task3.ATS.Service
 {
     public class PortService : IPortService
     {
@@ -29,10 +29,10 @@ namespace Task3.ATS.Controllers
             return _ports.Where(x => x.State == PortState.Free).FirstOrDefault();
         }
         
-        public IPort GetPortByPhoneNumber(IPhoneNumber phoneNumber)
-        {
-            return _ports.FirstOrDefault(x => x.Terminal.Number.Equals(phoneNumber));
-        }
+        //public IPort GetPortByPhoneNumber(IPhoneNumber phoneNumber)
+        //{
+        //    return _ports.FirstOrDefault(x => x.Terminal.Number.Equals(phoneNumber));
+        //}
 
         public void ChangeState(IPort port,PortState portState)
         {
