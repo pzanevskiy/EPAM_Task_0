@@ -70,11 +70,6 @@ namespace Task3.ATS.Models
             };
         }
 
-        public void GetPortByPhoneNumber(IPhoneNumber phone)
-        {
-           // return _portService.GetPortByPhoneNumber(phone);
-        }        
-
         private void OnOutgoingCall(object sender, IPhoneNumber phone)
         {
             var answerer = _terminalService.FindTerminalByNumber(phone);

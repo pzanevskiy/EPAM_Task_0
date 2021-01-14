@@ -9,7 +9,6 @@ namespace Task3.ATS.Models
     public class Port : IPort
     {      
         private PortState _portState;
-        //private ITerminal _terminal;
 
         public Guid Id { get; set; }
         public PortState State
@@ -21,22 +20,8 @@ namespace Task3.ATS.Models
                 OnStateChanged(this, _portState);
             }
         }
-        //public ITerminal Terminal
-        //{
-        //    get => _terminal;
-        //    set
-        //    {
-        //        _terminal = value;
-        //        RegisterEventHandlersForTerminal(_terminal);
-        //    }
-        //}     
 
         public event EventHandler<PortState> StateChanged;
-        //public event EventHandler<IPhoneNumber> OutgoingCall;
-        //public event EventHandler<IPhoneNumber> IncomingCall;
-        //public event EventHandler Accept;
-        //public event EventHandler Reject;
-        //public event EventHandler End;
 
         public Port()
         {

@@ -12,6 +12,5 @@ namespace Task3.ATS.Models.Interfaces
         public IPort GetFreePort();
 
         public void AddPort(IPort port);
-        //public IPort GetPortByPhoneNumber(IPhoneNumber phone);       
     }
 }
