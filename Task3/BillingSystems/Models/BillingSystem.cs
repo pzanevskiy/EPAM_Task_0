@@ -24,7 +24,7 @@ namespace Task3.BillingSystems.Models
         {
             CallService = new CallService();
             Users = new List<IUser>();
-            PhoneNumbers = new Dictionary<IPhoneNumber,bool>();
+            PhoneNumbers = new Dictionary<IPhoneNumber, bool>();
             Tariff = new Tariff(0.2);
             foreach(var item in phones)
             {

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Task3.ATS.Models;
+using Task3.ATS.Service.Interfaces;
 
 namespace Task3.ATS.Controllers
 {
-    public class CallService
+    public class CallService : ICallService
     {
         private ICollection<CallInfo> _calls;
 

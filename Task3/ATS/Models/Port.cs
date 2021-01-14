@@ -53,10 +53,12 @@ namespace Task3.ATS.Models
         {
             terminal.OutgoingCall += (sender, phone) =>
             {
+                State = PortState.Busy;
                 OutgoingCall?.Invoke(sender, phone);
             };        
             terminal.IncomingCall += (sender, phone) =>
             {
+                State = PortState.Busy;
                 IncomingCall?.Invoke(sender, phone);
             };
             terminal.Accept += (sender, e) =>

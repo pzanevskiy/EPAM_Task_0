@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using Task3.ATS.Controllers;
+using Task3.ATS.Service.Interfaces;
 
 namespace Task3.ATS.Models.Interfaces
 {
     public interface IStation
     {
-        public CallService CallService { get; }
+        public ICallService CallService { get; }
 
         public IPort GetFreePort();
 

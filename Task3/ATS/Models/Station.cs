@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text;
 using Task3.ATS.Controllers;
 using Task3.ATS.Models.Interfaces;
+using Task3.ATS.Service.Interfaces;
 using Task3.Enums;
 
 namespace Task3.ATS.Models
 {
     public class Station : IStation
     {
-        private PortService _portService;
-        private CallService _callService;
+        private IPortService _portService;
+        private ICallService _callService;
 
-        public CallService CallService => _callService;
+        public ICallService CallService => _callService;
 
         public Station()
         {
@@ -65,7 +66,6 @@ namespace Task3.ATS.Models
 
             if (answerer != null && caller != null)
             {
-                _portService.ChangeState(caller.Port, PortState.Busy);
                 caller.RememberConnection(caller.Number, phone);
                 CallInfo info = new CallInfo
                 {
@@ -96,7 +96,6 @@ namespace Task3.ATS.Models
         private void OnIncomingCall(object sender, IPhoneNumber phone)
         {
             var answerer = sender as Terminal;
-            _portService.ChangeState(answerer.Port, PortState.Busy);
             answerer.RememberConnection(phone, answerer.Number);
         }
 

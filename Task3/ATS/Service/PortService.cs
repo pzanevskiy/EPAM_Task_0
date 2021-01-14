@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using Task3.ATS.Models;
 using Task3.ATS.Models.Interfaces;
+using Task3.ATS.Service.Interfaces;
 using Task3.Enums;
 
 namespace Task3.ATS.Controllers
 {
-    public class PortService
+    public class PortService : IPortService
     {
         private ICollection<IPort> _ports;
 
