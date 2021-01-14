@@ -5,7 +5,7 @@ using Task3.ATS.Models;
 
 namespace Task3.ATS.Models.Interfaces
 {
-    public interface IPhoneNumber  :IEquatable<PhoneNumber>
+    public interface IPhoneNumber 
     {
         string Number { get; }
     }
