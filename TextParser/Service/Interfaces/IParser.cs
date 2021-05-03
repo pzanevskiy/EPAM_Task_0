@@ -9,5 +9,7 @@ namespace TextParser.Service.Interfaces
     public interface IParser
     {
         public IText ParseText(StreamReader reader);
+        public IText ParseText(ICollection<string> strings);
+
     }
 }

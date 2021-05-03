@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using TextParser.Models.Interfaces;
 using TextParser.Service.Interfaces;
 using System.Configuration;
+using DeepMorphy;
+using Task2.Models;
 
 namespace TextParser
 {
@@ -15,7 +17,7 @@ namespace TextParser
         static void Main(string[] args)
         {
             var app = ConfigurationManager.AppSettings;
-            
+
             IParser parser = new Parser();
             IText text = new Text();
             IFileService fileService = new FileService();
@@ -36,18 +38,61 @@ namespace TextParser
                 {
                     case 1:
                         {
-                            if (text != null)
+                            //if (text != null)
+                            //{
+                            ICollection<string> s = fileService.GetData(app["text"], "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                            //}
+
+                            text = parser.ParseText(s);
+                            var conc = textService.Concordance(text).ToDictionary(x => x.Word.ToString());
+                            var m = new MorphAnalyzer(withLemmatization: true);
+                            var results = m.Parse(conc.Select(x => x.Key)).ToList();
+                            Dictionary<string, IList<ConcordanceItem>> pairs = new Dictionary<string, IList<ConcordanceItem>>();
+
+                            foreach (var morphInfo in results)
                             {
-                                text = parser.ParseText(fileService.GetReader(app["text"]));
+                                var mainWord = morphInfo;
+                                bool checkout = false;
+                                foreach (var item in pairs)
+                                {
+                                    if (item.Value.Select(x => x.Word.ToString()).Contains(mainWord.Text))
+                                    {
+                                        checkout = true;
+                                        break;
+                                    }
+                                }
+                                if (checkout)
+                                {
+                                    continue;
+                                }
+                                IList<ConcordanceItem> strings = new List<ConcordanceItem>();
+                                foreach (var item in results)
+                                {
+                                    if (mainWord.CanBeSameLexeme(item))
+                                    {
+                                        //Console.WriteLine($"{mainWord.Text} --- {item.Text}");
+                                        strings.Add(conc[item.Text]);
+                                    }
+                                }
+                                pairs.Add(mainWord.Text, strings);
                             }
-                            Console.WriteLine(text);
+
+                            foreach (var item in pairs)
+                            {
+                                Console.WriteLine($"{string.Join('/', item.Value.Select(x => x.Word.ToString()))} --- " +
+                                    $"{item.Value.Select(x => x.Count).Sum()}");
+                            }
+                            foreach (var item in text.Sentences)
+                            {
+                                Console.WriteLine(item);
+                            }
                             break;
                         }
                     case 2:
                         {
                             Console.Write("Enter word length ");
                             int length = int.Parse(Console.ReadLine());
-                            var temp = textService.GetInterrogativeSentencesWordsWithLength(text.Sentences,length);
+                            var temp = textService.GetInterrogativeSentencesWordsWithLength(text.Sentences, length);
                             if (temp != null)
                             {
                                 foreach (var item in temp)
@@ -58,12 +103,12 @@ namespace TextParser
                             else
                             {
                                 Console.WriteLine("Not found");
-                            }                           
+                            }
                             break;
                         }
                     case 3:
                         {
-                            text.Sentences=textService.SortSentences(text.Sentences);
+                            text.Sentences = textService.SortSentences(text.Sentences);
                             Console.WriteLine(text);
                             break;
                         }
@@ -82,7 +127,7 @@ namespace TextParser
                         {
                             Console.Write("Enter word length ");
                             int length = int.Parse(Console.ReadLine());
-                            text.Sentences=textService.RemoveWordsStartsWithConsonants(text.Sentences,length);
+                            text.Sentences = textService.RemoveWordsStartsWithConsonants(text.Sentences, length);
                             Console.WriteLine(text);
                             break;
                         }
@@ -96,8 +141,8 @@ namespace TextParser
                             break;
                         }
                 }
-            }                                               
-            fileService.Write(text,app["answer"]);                                 
+            }
+            fileService.Write(text, app["answer"]);
         }
     }
 }

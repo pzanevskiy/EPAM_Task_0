@@ -6,7 +6,7 @@ namespace TextParser.Models.Separators
 {
     public class WordSeparators : Separator
     {
-        string[] wordSeparators = { ",", "—", ":", ";" };
+        string[] wordSeparators = { ",", " - ", ":", ";", "–" };
 
         public override string[] GetSeparators()
         {
